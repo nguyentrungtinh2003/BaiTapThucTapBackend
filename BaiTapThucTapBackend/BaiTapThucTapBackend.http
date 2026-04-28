@@ -1,0 +1,6 @@
+@BaiTapThucTapBackend_HostAddress = http://localhost:5130
+
+GET {{BaiTapThucTapBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
