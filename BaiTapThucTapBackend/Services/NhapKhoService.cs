@@ -23,25 +23,25 @@ namespace BaiTapThucTapBackend.Services
         {
             if (string.IsNullOrEmpty(request.So_Phieu_Nhap_Kho))
             {
-                throw new Exception("So phieu nhap kho khong duoc rong");
+                throw new Exception("Số phiếu nhập kho không được rỗng");
             }
             if (request.Kho_ID <= 0)
             {
-                throw new Exception("Kho khong hop le");
+                throw new Exception("Kho không hợp lệ");
             }
             if (request.NCC_ID <= 0)
             {
-                throw new Exception("Nha cung cap khong hop le");
+                throw new Exception("Nhà cung cấp không hợp lệ");
             }
             if (request.Ngay_Nhap_Kho == default)
             {
-                throw new Exception("Ngay nhap kho khong hien thi");
+                throw new Exception("Ngày nhập kho không hiển thị");
             }
 
             var exists = await _repo.ExistsSoPhieu(request.So_Phieu_Nhap_Kho);
             if(exists)
             {
-                throw new Exception("So phieu nhap kho da ton tai");
+                throw new Exception("Số phiếu nhập kho đã tồn tại");
             }
 
             var entity = NhapKhoMapping.ToEntity(request);
@@ -55,7 +55,7 @@ namespace BaiTapThucTapBackend.Services
 
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tìm thấy nhập kho");
             }
             await _repo.Delete(entity);
         }

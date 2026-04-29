@@ -59,14 +59,6 @@ namespace BaiTapThucTapBackend.Data
                 .HasIndex(x => x.Ten_Kho)
                 .IsUnique();
 
-            modelBuilder.Entity<KhoUser>()
-                .HasIndex(x => x.User_ID)
-                .IsUnique();
-
-            modelBuilder.Entity<KhoUser>()
-                .HasIndex(x => x.Kho_ID)
-                .IsUnique();
-
             modelBuilder.Entity<NhapKho>()
                 .HasIndex(x => x.So_Phieu_Nhap_Kho)
                 .IsUnique();

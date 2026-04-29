@@ -1,4 +1,6 @@
-﻿namespace BaiTapThucTapBackend.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BaiTapThucTapBackend.Models
 {
     public class NhapKhoDetail
     {
@@ -10,7 +12,9 @@
 
         public decimal Don_Gia_Nhap { get; set; }
 
-        public NhapKho NhapKho { get; set; }
-        public SanPham SanPham { get; set; }
+        [ForeignKey("Nhap_Kho_ID")]
+        public NhapKho? NhapKho { get; set; }
+        [ForeignKey("San_Pham_ID")]
+        public SanPham? SanPham { get; set; }
     }
 }

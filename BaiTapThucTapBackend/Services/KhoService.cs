@@ -23,7 +23,7 @@ namespace BaiTapThucTapBackend.Services
         {
             if (string.IsNullOrEmpty(request.Ten_Kho))
             {
-                throw new Exception("Ten khong duoc rong");
+                throw new Exception("Tên kho không được rỗng");
             }
 
             var entity = new Kho
@@ -41,7 +41,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tịm thấy kho");
             }
 
             entity.Ten_Kho = request.Ten_Kho;
@@ -56,7 +56,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tịm thấy kho");
             }
 
             await _repo.Delete(entity);

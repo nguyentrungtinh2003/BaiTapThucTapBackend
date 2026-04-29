@@ -6,9 +6,9 @@ namespace BaiTapThucTapBackend.Models
     {
         public int Id { get; set; }
         [Required]
-        public string Ten_Kho { get; set; }
-        public string Ghi_Chu { get; set; }
+        public string? Ten_Kho { get; set; }
+        public string? Ghi_Chu { get; set; }
 
-        public List<KhoUser> KhoUsers { get; set; }
+        public List<KhoUser>? KhoUsers { get; set; }
     }
 }

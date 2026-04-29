@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BaiTapThucTapBackend.Models
 {
@@ -9,8 +10,10 @@ namespace BaiTapThucTapBackend.Models
         [Required]
         public int Kho_ID { get; set; }
 
-        public User User { get; set; }
-        public Kho Kho { get; set; }
+        [ForeignKey("User_ID")]
+        public User? User { get; set; }
+        [ForeignKey("Kho_ID")]
+        public Kho? Kho { get; set; }
 
     }
 }

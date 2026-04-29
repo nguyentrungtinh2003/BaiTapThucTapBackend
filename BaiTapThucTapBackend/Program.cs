@@ -18,6 +18,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbcontext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
 // Đăng ký HttpClient
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:7153/") });
 
@@ -43,6 +48,7 @@ builder.Services.AddScoped<IKhoUserService, KhoUserService>();
 builder.Services.AddScoped<INhapKhoRepository, NhapKhoRepository>();
 builder.Services.AddScoped<INhapKhoService, NhapKhoService>();
 
+
 // authen---
 //builder.Services.AddAuthentication("Bearer")
 //    .Add("Bearer", options =>
@@ -62,27 +68,26 @@ builder.Services.AddScoped<INhapKhoService, NhapKhoService>();
 
 var app = builder.Build();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-        x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-});
-
-app.UseCors("AllowAll");
-
+// 1. ExceptionMiddleware: Nên đặt đầu tiên để bắt được lỗi của TẤT CẢ các bước sau
 app.UseMiddleware<ExceptionMiddleware>();
 
-// Configure the HTTP request pipeline.
+// 2. Swagger: Chỉ dùng trong môi trường Dev
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// 3. HttpsRedirection: Chuyển hướng HTTP sang HTTPS (Nên chạy sớm)
 app.UseHttpsRedirection();
 
+// 4. CORS: Phải đặt TRƯỚC Authorization và MapControllers
+app.UseCors("AllowAll");
+
+// 5. Authorization: Kiểm tra quyền (Phải sau CORS)
 app.UseAuthorization();
 
+// 6. MapControllers: Đích đến cuối cùng
 app.MapControllers();
 
 app.Run();

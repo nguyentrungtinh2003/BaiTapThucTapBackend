@@ -23,18 +23,18 @@ namespace BaiTapThucTapBackend.Services
         {
             if (request.User_ID <= 0)
             {
-                throw new Exception("User ID khong hop le");
+                throw new Exception("User ID không hợp lệ");
             }
             if(request.Kho_ID <= 0)
             {
-                throw new Exception("Kho ID khong hop le");
+                throw new Exception("Kho ID không hợp lệ");
             }
 
             var exists = await _repo.Exists(request.User_ID,request.Kho_ID);
 
             if(exists)
             {
-                throw new Exception("Phan quyen da ton tai");
+                throw new Exception("Phân quyền đã tồn tại");
             }
 
             var entity = KhoUserMapping.ToEntity(request);
@@ -47,7 +47,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.Get(UserID, KhoID);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tìm thấy");
             }
 
             await _repo.Delete(entity);

@@ -6,9 +6,9 @@ namespace BaiTapThucTapBackend.Models
     {
         public int Id { get; set; }
         [Required]
-        public string Ma_San_Pham { get; set; }
+        public string? Ma_San_Pham { get; set; }
         [Required]
-        public string Ten_San_Pham { get; set; }
+        public string? Ten_San_Pham { get; set; }
 
         [Required]
         public int Loai_San_Pham_ID { get; set; }
@@ -19,8 +19,8 @@ namespace BaiTapThucTapBackend.Models
 
         // ---
 
-        public LoaiSanPham LoaiSanPham { get; set; }
-        public DonViTinh DonViTinh { get; set; }
+        public LoaiSanPham? LoaiSanPham { get; set; }
+        public DonViTinh? DonViTinh { get; set; }
 
     }
 }

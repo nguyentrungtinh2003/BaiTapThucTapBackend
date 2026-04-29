@@ -23,12 +23,12 @@ namespace BaiTapThucTapBackend.Services
         {
             if(string.IsNullOrEmpty(request.Ten_Don_Vi_Tinh))
             {
-                throw new Exception("Ten khong duoc rong");
+                throw new Exception("Tên đơn vị tính không được rỗng");
             }
 
             if(await _repo.Exists(request.Ten_Don_Vi_Tinh))
             {
-                throw new Exception("Ten da ton tai");
+                throw new Exception("Tên dơn vị tính đã tồn tại");
             }
 
             var entity = new DonViTinh
@@ -46,7 +46,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tịm thấy đơn vị tính");
             }
             entity.Ten_Don_Vi_Tinh = request.Ten_Don_Vi_Tinh;
             entity.Ghi_Chu = request.Ghi_Chu;
@@ -60,7 +60,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tìm thấy đơn vị tính");
             }
 
             await _repo.Delete(entity);

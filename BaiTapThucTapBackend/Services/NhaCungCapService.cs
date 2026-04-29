@@ -24,11 +24,11 @@ namespace BaiTapThucTapBackend.Services
         {
             if (string.IsNullOrEmpty(request.Ma_NCC))
             {
-                throw new Exception("Ma nha cung cap khong duoc rong");
+                throw new Exception("Mã nhà cung cấp không được rỗng");
             }
             if (string.IsNullOrEmpty(request.Ten_NCC))
             {
-                throw new Exception("Ten nha cung cap khong duoc rong");
+                throw new Exception("Tên nhà cung cấp không dược rỗng");
             }
 
             var entity = new NhaCungCap
@@ -47,7 +47,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tịm thấy nhà cung cấp");
             }
             entity.Ma_NCC = request.Ma_NCC;
             entity.Ten_NCC = request.Ten_NCC;
@@ -62,7 +62,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tìm thấy nhà cung cấp");
             }
             await _repo.Delete(entity);
         }

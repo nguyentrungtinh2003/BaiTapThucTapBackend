@@ -28,30 +28,30 @@ namespace BaiTapThucTapBackend.Services
         {
             if (string.IsNullOrEmpty(request.Ma_San_Pham))
             {
-                throw new Exception("Ma san pham khong duoc rong");
+                throw new Exception("Mã sản phẩm không được rỗng");
             }
             if (string.IsNullOrEmpty(request.Ten_San_Pham))
             {
-                throw new Exception("Ten san pham khong duoc rong");
+                throw new Exception("Tên sản phẩm không được rỗng");
             }
             if(request.Loai_San_Pham_ID <= 0)
             {
-                throw new Exception("Phai chon loai san pham");
+                throw new Exception("Phải chọn loại sản phẩm");
             }
             if(request.Don_Vi_Tinh_ID <= 0)
             {
-                throw new Exception("Phai chon don vi tinh");
+                throw new Exception("Phải chọn đơn vị tính");
             }
             if(await _repo.ExistsMa(request.Ma_San_Pham))
             {
-                throw new Exception("Ma da ton tai");
+                throw new Exception("Mă đă tồn tại");
             }
 
             var lspExists = await _context.LoaiSanPhams.AnyAsync(x => x.Id == request.Loai_San_Pham_ID);
             var dvtExists = await _context.DonViTinhs.AnyAsync(x => x.Id == request.Don_Vi_Tinh_ID);
 
-            if (!lspExists) throw new Exception("Loai san pham khong ton tai");
-            if (!dvtExists) throw new Exception("Don vi tinh khong ton tai");
+            if (!lspExists) throw new Exception("Loại sản phẩm không tồn tại");
+            if (!dvtExists) throw new Exception("Đơn vị tính không tồn tại");
 
             var entity = new SanPham
             {
@@ -71,7 +71,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay san pham");
+                throw new Exception("Không tìm thấy sản phẩm");
             }
 
             entity.Ma_San_Pham = request.Ma_San_Pham;
@@ -89,7 +89,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay san pham");
+                throw new Exception("Không tìm thấy sản phẩm");
             }
             await _repo.Delete(entity);
         }

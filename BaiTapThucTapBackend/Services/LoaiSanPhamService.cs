@@ -24,11 +24,11 @@ namespace BaiTapThucTapBackend.Services
         {
             if(string.IsNullOrEmpty(request.Ma_LSP))
             {
-                throw new Exception("Ma_LSP khong duoc rong");
+                throw new Exception("Ma_LSP không được rỗng");
             }
             if(string.IsNullOrEmpty(request.Ten_LSP))
             {
-                throw new Exception("Ten_LSP khong duoc rong");
+                throw new Exception("Ten_LSP không được rỗng");
             }
 
             var entity = new LoaiSanPham
@@ -48,7 +48,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tìm thấy");
             }
 
             entity.Ma_LSP = request.Ma_LSP;
@@ -64,7 +64,7 @@ namespace BaiTapThucTapBackend.Services
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tìm thấy");
             }
 
             await _repo.Delete(entity);
