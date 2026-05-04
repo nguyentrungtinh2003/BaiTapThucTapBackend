@@ -6,6 +6,6 @@ namespace BaiTapThucTapBackend.Services.Interface
     {
         Task<List<KhoUserDto>> GetAll();
         Task<KhoUserDto> Create(CreateKhoUserRequest request);
-        Task Delete(int UserID, int KhoID);
+        Task Delete(string MaDangNhap, int KhoID);
     }
 }

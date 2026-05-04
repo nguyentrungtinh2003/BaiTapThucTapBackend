@@ -4,6 +4,7 @@ namespace BaiTapThucTapBackend.DTOs
 {
     public class CreateNhapKhoRequest
     {
+        public int Id { get; set; }
         public string? So_Phieu_Nhap_Kho { get; set; }
 
         public int Kho_ID { get; set; }
@@ -13,6 +14,6 @@ namespace BaiTapThucTapBackend.DTOs
 
         public string? Ghi_Chu { get; set; }
 
-        public List<NhapKhoDetail>? Details { get; set; } = new();
+        public List<NhapKhoDetail>? ChiTiets { get; set; } = new();
     }
 }

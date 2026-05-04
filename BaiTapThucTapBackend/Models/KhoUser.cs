@@ -5,15 +5,14 @@ namespace BaiTapThucTapBackend.Models
 {
     public class KhoUser
     {
-        [Required]
-        public int User_ID { get; set; }
-        [Required]
-        public int Kho_ID { get; set; }
+        public int Id { get; set; }
 
-        [ForeignKey("User_ID")]
-        public User? User { get; set; }
-        [ForeignKey("Kho_ID")]
-        public Kho? Kho { get; set; }
+        [Required(ErrorMessage = "Mã đãng nhập không được rỗng")]
+        public string Ma_Dang_Nhap { get; set; }
+
+        [ForeignKey("Kho")]
+        public int Kho_ID { get; set; }
+        public Kho Kho { get; set; }
 
     }
 }

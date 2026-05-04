@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace BaiTapThucTapBackend.Models
 {
-    public class NhapKho
+    public class XNKNhapKho
     {
         public int Id { get; set; }
 
@@ -24,6 +24,6 @@ namespace BaiTapThucTapBackend.Models
 
         public string? Ghi_Chu { get; set; }
 
-        public ICollection<NhapKhoDetail> ChiTiets { get; set; }
+        public ICollection<XNKNhapKhoDetail> ChiTiets { get; set; }
     }
 }

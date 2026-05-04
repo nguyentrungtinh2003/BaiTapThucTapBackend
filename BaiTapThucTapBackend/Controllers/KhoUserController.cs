@@ -32,10 +32,10 @@ namespace BaiTapThucTapBackend.Controllers
             return Ok("Tao thanh cong");
         }
 
-        [HttpDelete("{UserID}/{KhoID}")]
-        public async Task<IActionResult> Delete(int UserID, int KhoID)
+        [HttpDelete("{MaDangNhap}/{KhoID}")]
+        public async Task<IActionResult> Delete(string MaDangNhap, int KhoID)
         {
-            await _service.Delete(UserID, KhoID);
+            await _service.Delete(MaDangNhap, KhoID);
             return Ok("Xoa thanh cong");
         }
     }

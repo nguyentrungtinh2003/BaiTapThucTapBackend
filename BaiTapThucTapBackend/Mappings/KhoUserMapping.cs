@@ -7,7 +7,7 @@ public static class KhoUserMapping
     {
         return new KhoUserDto
         {
-            User_ID = entity.User_ID,
+            Ma_Dang_Nhap = entity.Ma_Dang_Nhap,
             Kho_ID = entity.Kho_ID
         };
     }
@@ -16,7 +16,7 @@ public static class KhoUserMapping
     {
         return new KhoUser
         {
-            User_ID = request.User_ID,
+            Ma_Dang_Nhap = request.Ma_Dang_Nhap,
             Kho_ID = request.Kho_ID
         };
     }

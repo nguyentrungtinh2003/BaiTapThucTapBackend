@@ -18,7 +18,7 @@ namespace BaiTapThucTapBackend.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Ten_Don_Vi_Tinh = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Ghi_Chu = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Ghi_Chu = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -32,7 +32,7 @@ namespace BaiTapThucTapBackend.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Ten_Kho = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Ghi_Chu = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Ghi_Chu = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -60,9 +60,9 @@ namespace BaiTapThucTapBackend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Ma_NCC = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Ma_NCC = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Ten_NCC = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Ghi_Chu = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Ghi_Chu = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -70,18 +70,45 @@ namespace BaiTapThucTapBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "KhoUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Ma_Dang_Nhap = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Mat_Khau = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Ma_Dang_Nhap = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Kho_ID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_KhoUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_KhoUsers_Khos_Kho_ID",
+                        column: x => x.Kho_ID,
+                        principalTable: "Khos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "XuatKhos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    So_Phieu_Xuat_Kho = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Kho_ID = table.Column<int>(type: "int", nullable: false),
+                    Ngay_Xuat_Kho = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Ghi_Chu = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_XuatKhos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_XuatKhos_Khos_Kho_ID",
+                        column: x => x.Kho_ID,
+                        principalTable: "Khos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -123,53 +150,55 @@ namespace BaiTapThucTapBackend.Migrations
                     Kho_ID = table.Column<int>(type: "int", nullable: false),
                     NCC_ID = table.Column<int>(type: "int", nullable: false),
                     Ngay_Nhap_Kho = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Ghi_Chu = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    KhoId = table.Column<int>(type: "int", nullable: false),
-                    NhaCungCapId = table.Column<int>(type: "int", nullable: false)
+                    Ghi_Chu = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NhapKhos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NhapKhos_Khos_KhoId",
-                        column: x => x.KhoId,
+                        name: "FK_NhapKhos_Khos_Kho_ID",
+                        column: x => x.Kho_ID,
                         principalTable: "Khos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_NhapKhos_NhaCungCaps_NhaCungCapId",
-                        column: x => x.NhaCungCapId,
+                        name: "FK_NhapKhos_NhaCungCaps_NCC_ID",
+                        column: x => x.NCC_ID,
                         principalTable: "NhaCungCaps",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "KhoUsers",
+                name: "XuatKhoChiTiets",
                 columns: table => new
                 {
-                    User_ID = table.Column<int>(type: "int", nullable: false),
-                    Kho_ID = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Xuat_Kho_ID = table.Column<int>(type: "int", nullable: false),
+                    San_Pham_ID = table.Column<int>(type: "int", nullable: false),
+                    SL_Xuat = table.Column<int>(type: "int", nullable: false),
+                    Don_Gia_Xuat = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_KhoUsers", x => new { x.User_ID, x.Kho_ID });
+                    table.PrimaryKey("PK_XuatKhoChiTiets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_KhoUsers_Khos_Kho_ID",
-                        column: x => x.Kho_ID,
-                        principalTable: "Khos",
+                        name: "FK_XuatKhoChiTiets_SanPhams_San_Pham_ID",
+                        column: x => x.San_Pham_ID,
+                        principalTable: "SanPhams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_KhoUsers_User_User_ID",
-                        column: x => x.User_ID,
-                        principalTable: "User",
+                        name: "FK_XuatKhoChiTiets_XuatKhos_Xuat_Kho_ID",
+                        column: x => x.Xuat_Kho_ID,
+                        principalTable: "XuatKhos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "NhapKhoDetail",
+                name: "NhapKhoChiTiets",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -177,22 +206,20 @@ namespace BaiTapThucTapBackend.Migrations
                     Nhap_Kho_ID = table.Column<int>(type: "int", nullable: false),
                     San_Pham_ID = table.Column<int>(type: "int", nullable: false),
                     SL_Nhap = table.Column<int>(type: "int", nullable: false),
-                    Don_Gia_Nhap = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    NhapKhoId = table.Column<int>(type: "int", nullable: false),
-                    SanPhamId = table.Column<int>(type: "int", nullable: false)
+                    Don_Gia_Nhap = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NhapKhoDetail", x => x.Id);
+                    table.PrimaryKey("PK_NhapKhoChiTiets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NhapKhoDetail_NhapKhos_NhapKhoId",
-                        column: x => x.NhapKhoId,
+                        name: "FK_NhapKhoChiTiets_NhapKhos_Nhap_Kho_ID",
+                        column: x => x.Nhap_Kho_ID,
                         principalTable: "NhapKhos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_NhapKhoDetail_SanPhams_SanPhamId",
-                        column: x => x.SanPhamId,
+                        name: "FK_NhapKhoChiTiets_SanPhams_San_Pham_ID",
+                        column: x => x.San_Pham_ID,
                         principalTable: "SanPhams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -213,13 +240,12 @@ namespace BaiTapThucTapBackend.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_KhoUsers_Kho_ID",
                 table: "KhoUsers",
-                column: "Kho_ID",
-                unique: true);
+                column: "Kho_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_KhoUsers_User_ID",
+                name: "IX_KhoUsers_Ma_Dang_Nhap_Kho_ID",
                 table: "KhoUsers",
-                column: "User_ID",
+                columns: new[] { "Ma_Dang_Nhap", "Kho_ID" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -235,36 +261,30 @@ namespace BaiTapThucTapBackend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_NhaCungCaps_Ma_NCC",
-                table: "NhaCungCaps",
-                column: "Ma_NCC",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_NhaCungCaps_Ten_NCC",
                 table: "NhaCungCaps",
                 column: "Ten_NCC",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_NhapKhoDetail_NhapKhoId",
-                table: "NhapKhoDetail",
-                column: "NhapKhoId");
+                name: "IX_NhapKhoChiTiets_Nhap_Kho_ID",
+                table: "NhapKhoChiTiets",
+                column: "Nhap_Kho_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NhapKhoDetail_SanPhamId",
-                table: "NhapKhoDetail",
-                column: "SanPhamId");
+                name: "IX_NhapKhoChiTiets_San_Pham_ID",
+                table: "NhapKhoChiTiets",
+                column: "San_Pham_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NhapKhos_KhoId",
+                name: "IX_NhapKhos_Kho_ID",
                 table: "NhapKhos",
-                column: "KhoId");
+                column: "Kho_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NhapKhos_NhaCungCapId",
+                name: "IX_NhapKhos_NCC_ID",
                 table: "NhapKhos",
-                column: "NhaCungCapId");
+                column: "NCC_ID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NhapKhos_So_Phieu_Nhap_Kho",
@@ -287,6 +307,27 @@ namespace BaiTapThucTapBackend.Migrations
                 table: "SanPhams",
                 column: "Ma_San_Pham",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XuatKhoChiTiets_San_Pham_ID",
+                table: "XuatKhoChiTiets",
+                column: "San_Pham_ID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XuatKhoChiTiets_Xuat_Kho_ID",
+                table: "XuatKhoChiTiets",
+                column: "Xuat_Kho_ID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XuatKhos_Kho_ID",
+                table: "XuatKhos",
+                column: "Kho_ID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_XuatKhos_So_Phieu_Xuat_Kho",
+                table: "XuatKhos",
+                column: "So_Phieu_Xuat_Kho",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -296,10 +337,10 @@ namespace BaiTapThucTapBackend.Migrations
                 name: "KhoUsers");
 
             migrationBuilder.DropTable(
-                name: "NhapKhoDetail");
+                name: "NhapKhoChiTiets");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "XuatKhoChiTiets");
 
             migrationBuilder.DropTable(
                 name: "NhapKhos");
@@ -308,7 +349,7 @@ namespace BaiTapThucTapBackend.Migrations
                 name: "SanPhams");
 
             migrationBuilder.DropTable(
-                name: "Khos");
+                name: "XuatKhos");
 
             migrationBuilder.DropTable(
                 name: "NhaCungCaps");
@@ -318,6 +359,9 @@ namespace BaiTapThucTapBackend.Migrations
 
             migrationBuilder.DropTable(
                 name: "LoaiSanPhams");
+
+            migrationBuilder.DropTable(
+                name: "Khos");
         }
     }
 }

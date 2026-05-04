@@ -48,6 +48,9 @@ builder.Services.AddScoped<IKhoUserService, KhoUserService>();
 builder.Services.AddScoped<INhapKhoRepository, NhapKhoRepository>();
 builder.Services.AddScoped<INhapKhoService, NhapKhoService>();
 
+builder.Services.AddScoped<IXuatKhoRepository, XuatKhoRepository>();
+builder.Services.AddScoped<IXuatKhoService, XuatKhoService>();
+
 
 // authen---
 //builder.Services.AddAuthentication("Bearer")

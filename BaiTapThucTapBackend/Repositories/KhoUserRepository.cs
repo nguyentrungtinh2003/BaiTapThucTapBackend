@@ -16,9 +16,9 @@ namespace BaiTapThucTapBackend.Repositories
 
         public async Task<List<KhoUser>> GetAll() => await _context.KhoUsers.ToListAsync();
 
-        public async Task<KhoUser> Get(int UserID, int KhoID) => await _context.KhoUsers.FirstOrDefaultAsync(x => x.User_ID == UserID && x.Kho_ID == KhoID);
+        public async Task<KhoUser> Get(string MaDangNhap, int KhoID) => await _context.KhoUsers.FirstOrDefaultAsync(x => x.Ma_Dang_Nhap == MaDangNhap && x.Kho_ID == KhoID);
 
-        public async Task<bool> Exists(int User_ID, int KhoID) => await _context.KhoUsers.AnyAsync(x => x.User_ID == User_ID && x.Kho_ID == KhoID);
+        public async Task<bool> Exists(string MaDangNhap, int KhoID) => await _context.KhoUsers.AnyAsync(x => x.Ma_Dang_Nhap == MaDangNhap && x.Kho_ID == KhoID);
         
         public async Task Add(KhoUser entity)
         {

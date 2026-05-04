@@ -21,16 +21,16 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<KhoUserDto> Create(CreateKhoUserRequest request)
         {
-            if (request.User_ID <= 0)
+            if (string.IsNullOrEmpty(request.Ma_Dang_Nhap))
             {
-                throw new Exception("User ID không hợp lệ");
+                throw new Exception("Ma dang nhap khong hop le");
             }
             if(request.Kho_ID <= 0)
             {
                 throw new Exception("Kho ID không hợp lệ");
             }
 
-            var exists = await _repo.Exists(request.User_ID,request.Kho_ID);
+            var exists = await _repo.Exists(request.Ma_Dang_Nhap,request.Kho_ID);
 
             if(exists)
             {
@@ -42,9 +42,9 @@ namespace BaiTapThucTapBackend.Services
             return KhoUserMapping.ToDto(entity);
         }
 
-        public async Task Delete(int UserID, int KhoID)
+        public async Task Delete(string MaDangNhap, int KhoID)
         {
-            var entity = await _repo.Get(UserID, KhoID);
+            var entity = await _repo.Get(MaDangNhap, KhoID);
             if(entity == null)
             {
                 throw new Exception("Không tìm thấy");

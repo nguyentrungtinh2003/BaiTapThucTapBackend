@@ -2,7 +2,7 @@
 
 namespace BaiTapThucTapBackend.Models
 {
-    public class NhapKhoDetail
+    public class XNKNhapKhoDetail
     {
         public int Id { get; set; }
         [ForeignKey("NhapKho")]

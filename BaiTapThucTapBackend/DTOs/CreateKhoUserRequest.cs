@@ -2,7 +2,7 @@
 {
     public class CreateKhoUserRequest
     {
-        public int User_ID { get; set; }
+        public string Ma_Dang_Nhap { get; set; }
         public int Kho_ID { get; set; }
     }
 }

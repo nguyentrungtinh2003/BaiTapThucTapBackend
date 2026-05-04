@@ -12,7 +12,7 @@ public static class NhapKhoMapping
             NCC_ID = request.NCC_ID,
             Ngay_Nhap_Kho = request.Ngay_Nhap_Kho,
             Ghi_Chu = request.Ghi_Chu,
-            Details = request.Details.Select(d => new NhapKhoDetail
+            ChiTiets = request.ChiTiets.Select(d => new NhapKhoDetail
             {
                 San_Pham_ID = d.San_Pham_ID,
                 SL_Nhap = d.SL_Nhap,
@@ -28,10 +28,12 @@ public static class NhapKhoMapping
             Id = entity.Id,
             So_Phieu_Nhap_Kho = entity.So_Phieu_Nhap_Kho,
             Kho_ID = entity.Kho_ID,
+            Ten_Kho = entity.Kho?.Ten_Kho,
             NCC_ID = entity.NCC_ID,
+            Ten_NCC = entity.NhaCungCap.Ten_NCC,
             Ngay_Nhap_Kho = entity.Ngay_Nhap_Kho,
             Ghi_Chu = entity.Ghi_Chu,
-            Details = entity.Details.Select(d => new NhapKhoDetailDto
+            ChiTiets = entity.ChiTiets.Select(d => new NhapKhoDetailDto
             {
                 San_Pham_ID = d.San_Pham_ID,
                 SL_Nhap = d.SL_Nhap,
