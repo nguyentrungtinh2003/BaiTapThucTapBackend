@@ -1,4 +1,5 @@
 ﻿using BaiTapThucTapBackend.DTOs;
+using BaiTapThucTapBackend.Models;
 
 namespace BaiTapThucTapBackend.Services.Interface
 {
@@ -6,6 +7,8 @@ namespace BaiTapThucTapBackend.Services.Interface
     {
         Task<List<NhapKhoDto>> GetAll();
         Task<NhapKhoDto> Create(CreateNhapKhoRequest request);
+
+        Task<NhapKhoDto> Update(NhapKho entity);
         Task Delete(int id);
     }
 }

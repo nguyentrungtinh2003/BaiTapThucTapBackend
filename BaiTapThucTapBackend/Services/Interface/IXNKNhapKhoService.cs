@@ -1,9 +1,10 @@
-﻿using BaiTapThucTapBackend.Models;
+﻿using BaiTapThucTapBackend.DTOs;
+using BaiTapThucTapBackend.Models;
 
 namespace BaiTapThucTapBackend.Services.Interface
 {
     public interface IXNKNhapKhoService
     {
-        Task<bool> HandleAdjustmentAsync(XNKNhapKho model);
+        Task<bool> HandleAdjustmentAsync(CreateXNKNhapKhoRequest model);
     }
 }

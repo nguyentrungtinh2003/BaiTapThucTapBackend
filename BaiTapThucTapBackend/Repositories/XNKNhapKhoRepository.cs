@@ -27,7 +27,15 @@ namespace BaiTapThucTapBackend.Repositories
         public async Task Add(XNKNhapKho entity)
         {
             _context.Add(entity);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.InnerException?.Message);
+                throw;
+            }
         }
 
         public async Task Update(XNKNhapKho entity)

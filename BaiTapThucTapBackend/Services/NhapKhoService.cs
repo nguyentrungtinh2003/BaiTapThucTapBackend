@@ -1,4 +1,5 @@
 ﻿using BaiTapThucTapBackend.DTOs;
+using BaiTapThucTapBackend.Models;
 using BaiTapThucTapBackend.Repositories.Interface;
 using BaiTapThucTapBackend.Services.Interface;
 
@@ -46,6 +47,12 @@ namespace BaiTapThucTapBackend.Services
 
             var entity = NhapKhoMapping.ToEntity(request);
             await _repo.Add(entity);
+            return NhapKhoMapping.ToDto(entity);
+        }
+
+        public async Task<NhapKhoDto> Update(NhapKho entity)
+        {
+            await _repo.Update(entity);
             return NhapKhoMapping.ToDto(entity);
         }
 

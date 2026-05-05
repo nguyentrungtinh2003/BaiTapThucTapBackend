@@ -8,6 +8,11 @@ namespace BaiTapThucTapBackend.Repositories.Interface
         Task<NhapKho> GetById(int id);
         Task<bool> ExistsSoPhieu(string sophieu);
         Task Add(NhapKho entity);
+
+        Task AddDetail(NhapKhoDetail detail);
+        Task DeleteDetails(int nhapKhoId);
+
+        Task Update(NhapKho entity);
         Task Delete(NhapKho entity);
     }
 }

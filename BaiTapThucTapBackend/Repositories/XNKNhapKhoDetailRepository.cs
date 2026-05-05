@@ -11,11 +11,11 @@ namespace BaiTapThucTapBackend.Repositories
         public XNKNhapKhoDetailRepository(AppDbcontext context) => _context = context;
 
         public async Task<List<XNKNhapKhoDetail>> GetByHeaderIdAsync(int maNhapKho)
-            => await _context.XNKNhapKhoChiTiets.Where(x => x.Nhap_Kho_ID == maNhapKho).ToListAsync();
+            => await _context.XNKNhapKhoChiTiets.Where(x => x.XNKNhap_Kho_ID == maNhapKho).ToListAsync();
 
         public async Task ClearDetailsByHeaderIdAsync(int headerId)
         {
-            var oldDetails = _context.XNKNhapKhoChiTiets.Where(x => x.Nhap_Kho_ID == headerId);
+            var oldDetails = _context.XNKNhapKhoChiTiets.Where(x => x.XNKNhap_Kho_ID == headerId);
             _context.XNKNhapKhoChiTiets.RemoveRange(oldDetails);
         }
 

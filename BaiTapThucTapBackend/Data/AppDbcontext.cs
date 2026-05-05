@@ -48,7 +48,7 @@ namespace BaiTapThucTapBackend.Data
             modelBuilder.Entity<NhapKho>()
                 .HasIndex(x => x.So_Phieu_Nhap_Kho).IsUnique();
 
-            modelBuilder.Entity<XNKNhapKho>().HasIndex(x => x.So_Phieu_Nhap_Kho).IsUnique();
+            //modelBuilder.Entity<XNKNhapKho>().HasIndex(x => x.So_Phieu_Nhap_Kho).IsUnique();
 
             modelBuilder.Entity<XuatKho>()
                 .HasIndex(x => x.So_Phieu_Xuat_Kho).IsUnique();

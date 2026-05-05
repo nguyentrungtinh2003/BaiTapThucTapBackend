@@ -23,7 +23,7 @@ namespace BaiTapThucTapBackend.Services
         {
             if (string.IsNullOrEmpty(request.Ma_Dang_Nhap))
             {
-                throw new Exception("Ma dang nhap khong hop le");
+                throw new Exception("Mã đãng nhập không hợp lệ");
             }
             if(request.Kho_ID <= 0)
             {

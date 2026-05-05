@@ -4,6 +4,7 @@ using BaiTapThucTapBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BaiTapThucTapBackend.Migrations
 {
     [DbContext(typeof(AppDbcontext))]
-    partial class AppDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20260505071542_Fix_XNKNhapKho_Relation")]
+    partial class Fix_XNKNhapKho_Relation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -305,6 +308,9 @@ namespace BaiTapThucTapBackend.Migrations
                     b.Property<int>("San_Pham_ID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("XNKNhapKhoId")
+                        .HasColumnType("int");
+
                     b.Property<int>("XNKNhap_Kho_ID")
                         .HasColumnType("int");
 
@@ -312,7 +318,7 @@ namespace BaiTapThucTapBackend.Migrations
 
                     b.HasIndex("San_Pham_ID");
 
-                    b.HasIndex("XNKNhap_Kho_ID");
+                    b.HasIndex("XNKNhapKhoId");
 
                     b.ToTable("XNKNhapKhoChiTiets");
                 });
@@ -474,9 +480,7 @@ namespace BaiTapThucTapBackend.Migrations
 
                     b.HasOne("BaiTapThucTapBackend.Models.XNKNhapKho", "XNKNhapKho")
                         .WithMany("ChiTiets")
-                        .HasForeignKey("XNKNhap_Kho_ID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("XNKNhapKhoId");
 
                     b.Navigation("SanPham");
 

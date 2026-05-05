@@ -1,5 +1,7 @@
-﻿using BaiTapThucTapBackend.Models;
+﻿using BaiTapThucTapBackend.DTOs;
+using BaiTapThucTapBackend.Models;
 using BaiTapThucTapBackend.Services;
+using BaiTapThucTapBackend.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BaiTapThucTapBackend.Controllers
@@ -8,15 +10,15 @@ namespace BaiTapThucTapBackend.Controllers
     [Route("api/[controller]")]
     public class XNKNhapKhoController : ControllerBase
     {
-        private readonly XNKNhapKhoService _service;
+        private readonly IXNKNhapKhoService _service;
 
-        public XNKNhapKhoController(XNKNhapKhoService service)
+        public XNKNhapKhoController(IXNKNhapKhoService service)
         {
             _service = service;
         }
 
         [HttpPost("adjustment")]
-        public async Task<IActionResult> HandleAdjustment([FromBody] XNKNhapKho model)
+        public async Task<IActionResult> HandleAdjustment([FromBody] CreateXNKNhapKhoRequest model)
         {
             if (model == null) return BadRequest("Dữ liệu không hợp lệ");
 

@@ -5,10 +5,10 @@ namespace BaiTapThucTapBackend.Models
     public class XNKNhapKhoDetail
     {
         public int Id { get; set; }
-        [ForeignKey("NhapKho")]
+        [ForeignKey("XNKNhapKho")]
 
-        public int Nhap_Kho_ID { get; set; }
-        public NhapKho? NhapKho { get; set; }
+        public int XNKNhap_Kho_ID { get; set; }
+        public XNKNhapKho? XNKNhapKho { get; set; }
 
         [ForeignKey("SanPham")]
 

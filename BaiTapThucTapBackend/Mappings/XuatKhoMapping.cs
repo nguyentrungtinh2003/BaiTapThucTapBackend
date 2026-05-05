@@ -28,6 +28,7 @@ public static class XuatKhoMapping
             Id = entity.Id,
             So_Phieu_Xuat_Kho = entity.So_Phieu_Xuat_Kho,
             Kho_ID = entity.Kho_ID,
+            Ten_Kho = entity.Kho?.Ten_Kho,
             Ngay_Xuat_Kho = entity.Ngay_Xuat_Kho,
             Ghi_Chu = entity.Ghi_Chu,
             ChiTiets = entity.ChiTiets.Select(d => new XuatKhoDetailDto

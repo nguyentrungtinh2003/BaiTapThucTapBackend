@@ -31,6 +31,23 @@ namespace BaiTapThucTapBackend.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task AddDetail(NhapKhoDetail detail)
+        {
+            await _context.NhapKhoChiTiets.AddAsync(detail);
+        }
+        public async Task DeleteDetails(int nhapKhoId)
+        {
+            var details = _context.NhapKhoChiTiets
+                .Where(x => x.Nhap_Kho_ID == nhapKhoId);
+
+            _context.NhapKhoChiTiets.RemoveRange(details);
+        }
+        public async Task Update(NhapKho entity)
+        {
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task Delete(NhapKho entity)
         {
             _context.Remove(entity);

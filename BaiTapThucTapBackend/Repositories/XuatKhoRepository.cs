@@ -14,7 +14,9 @@ namespace BaiTapThucTapBackend.Repositories
             _context = context;
         }
 
-        public async Task<List<XuatKho>> GetAll() => await _context.XuatKhos.Include(x => x.ChiTiets).ToListAsync();
+        public async Task<List<XuatKho>> GetAll() => await _context.XuatKhos.
+            Include(x => x.Kho)
+            .Include(x => x.ChiTiets).ToListAsync();
 
         public async Task<XuatKho> GetById(int id) => await _context.XuatKhos.Include(x => x.ChiTiets).FirstAsync(x => x.Id == id);
 
