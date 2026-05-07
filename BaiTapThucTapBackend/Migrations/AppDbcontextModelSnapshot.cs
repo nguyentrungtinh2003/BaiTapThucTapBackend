@@ -263,6 +263,9 @@ namespace BaiTapThucTapBackend.Migrations
                     b.Property<string>("Ghi_Chu")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsLatest")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Kho_ID")
                         .HasColumnType("int");
 
@@ -272,9 +275,18 @@ namespace BaiTapThucTapBackend.Migrations
                     b.Property<DateTime>("Ngay_Nhap_Kho")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Nhap_Kho_ID")
+                        .HasColumnType("int");
+
                     b.Property<string>("So_Phieu_Nhap_Kho")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Updated_At")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -282,8 +294,7 @@ namespace BaiTapThucTapBackend.Migrations
 
                     b.HasIndex("NCC_ID");
 
-                    b.HasIndex("So_Phieu_Nhap_Kho")
-                        .IsUnique();
+                    b.HasIndex("Nhap_Kho_ID");
 
                     b.ToTable("XNKNhapKhos");
                 });
@@ -450,18 +461,26 @@ namespace BaiTapThucTapBackend.Migrations
                     b.HasOne("BaiTapThucTapBackend.Models.Kho", "Kho")
                         .WithMany()
                         .HasForeignKey("Kho_ID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("BaiTapThucTapBackend.Models.NhaCungCap", "NhaCungCap")
                         .WithMany()
                         .HasForeignKey("NCC_ID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("BaiTapThucTapBackend.Models.NhapKho", "NhapKho")
+                        .WithMany()
+                        .HasForeignKey("Nhap_Kho_ID")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Kho");
 
                     b.Navigation("NhaCungCap");
+
+                    b.Navigation("NhapKho");
                 });
 
             modelBuilder.Entity("BaiTapThucTapBackend.Models.XNKNhapKhoDetail", b =>

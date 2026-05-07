@@ -8,7 +8,8 @@ namespace BaiTapThucTapBackend.Services.Interface
         Task<List<NhapKhoDto>> GetAll();
         Task<NhapKhoDto> Create(CreateNhapKhoRequest request);
 
-        Task<NhapKhoDto> Update(NhapKho entity);
+        Task<NhapKhoDto> GetById(int id);
+        Task UpdateDetails(int id,NhapKhoDetailDto entity);
         Task Delete(int id);
     }
 }

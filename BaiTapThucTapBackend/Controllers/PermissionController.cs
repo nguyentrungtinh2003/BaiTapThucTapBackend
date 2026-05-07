@@ -28,7 +28,7 @@ namespace BaiTapThucTapBackend.Controllers
             return Ok(new
             {
                 Ma_Dang_Nhap = permissionDto.Ma_Dang_Nhap,
-                isAdmin = permissionDto.Ma_Dang_Nhap.ToLower() == "admin",
+                isAdmin = permissionDto.Ma_Dang_Nhap.ToLower() == "30000",
                 Kho_ID = permissionDto.Kho_ID,
             });
         }

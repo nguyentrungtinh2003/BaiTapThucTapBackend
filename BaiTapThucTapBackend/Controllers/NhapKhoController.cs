@@ -27,6 +27,18 @@ namespace BaiTapThucTapBackend.Controllers
             return Ok(await _service.Create(request));
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            return Ok(await _service.GetById(id));
+        }
+
+        [HttpPut("details/{id}")]
+        public async Task<IActionResult> UpdateDetails(int id, NhapKhoDetailDto entity)
+        {
+            await _service.UpdateDetails(id, entity);
+			return Ok();
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

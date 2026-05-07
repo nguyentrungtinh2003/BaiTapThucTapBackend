@@ -48,6 +48,8 @@ builder.Services.AddScoped<IKhoUserService, KhoUserService>();
 builder.Services.AddScoped<INhapKhoRepository, NhapKhoRepository>();
 builder.Services.AddScoped<INhapKhoService, NhapKhoService>();
 
+builder.Services.AddScoped<INhapKhoDetailRepository, NhapKhoDetailRepository>();
+
 builder.Services.AddScoped<IXNKNhapKhoDetailRepository, XNKNhapKhoDetailRepository>();
 builder.Services.AddScoped<IXNKNhapKhoDetailService, XNKNhapKhoDetailService>();
 

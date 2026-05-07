@@ -1,9 +1,9 @@
 ﻿using BaiTapThucTapBackend.Data;
 using BaiTapThucTapBackend.DTOs;
-using BaiTapThucTapBackend.Mappings;
 using BaiTapThucTapBackend.Models;
 using BaiTapThucTapBackend.Repositories.Interface;
 using BaiTapThucTapBackend.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace BaiTapThucTapBackend.Services
 {
@@ -36,49 +36,49 @@ namespace BaiTapThucTapBackend.Services
                 if (model.NCC_ID <= 0)
                     throw new Exception("Nhà cung cấp không được rỗng");
 
-                // 2. GET HEADER (tracked entity)
+                // check tồn tại
                 var nhapKho = await _repo.GetById(model.Id);
-
                 if (nhapKho == null)
                     throw new Exception("Không tìm thấy phiếu nhập");
 
-                // 3. UPDATE HEADER
-                nhapKho.So_Phieu_Nhap_Kho = model.So_Phieu_Nhap_Kho;
-                nhapKho.Kho_ID = model.Kho_ID;
-                nhapKho.NCC_ID = model.NCC_ID;
-                nhapKho.Ngay_Nhap_Kho = model.Ngay_Nhap_Kho;
-                nhapKho.Ghi_Chu = model.Ghi_Chu;
+                // check unique
+                var isExist = await _context.XNKNhapKhos
+                    .AnyAsync(x => x.So_Phieu_Nhap_Kho == model.So_Phieu_Nhap_Kho
+                                && x.Nhap_Kho_ID != model.Id);
 
-                // 4. UPDATE DETAIL (replace full)
-                await _repo.DeleteDetails(model.Id);
+                if (isExist)
+                    throw new Exception("Số phiếu đã tồn tại");
 
-                if (model.ChiTiets != null && model.ChiTiets.Any())
+                // lấy bản hiện tại
+                var latest = await _context.XNKNhapKhos
+                    .Where(x => x.Nhap_Kho_ID == model.Id && x.IsLatest)
+                    .FirstOrDefaultAsync();
+
+                // version
+                int newVersion = (latest?.Version ?? 0) + 1;
+
+                // tắt bản cũ
+                if (latest != null)
                 {
-                    foreach (var ct in model.ChiTiets)
-                    {
-                        await _repo.AddDetail(new NhapKhoDetail
-                        {
-                            Nhap_Kho_ID = model.Id,
-                            San_Pham_ID = ct.San_Pham_ID,
-                            SL_Nhap = ct.SL_Nhap,
-                            Don_Gia_Nhap = ct.Don_Gia_Nhap
-                        });
-                    }
+                    latest.IsLatest = false;
                 }
 
-                // 5. LOG (INSERT ONLY - KHÔNG UPDATE)
+                // insert mới
                 var log = new XNKNhapKho
                 {
+                    Nhap_Kho_ID = model.Id,
                     So_Phieu_Nhap_Kho = model.So_Phieu_Nhap_Kho,
                     Kho_ID = model.Kho_ID,
                     NCC_ID = model.NCC_ID,
                     Ngay_Nhap_Kho = model.Ngay_Nhap_Kho,
                     Ghi_Chu = model.Ghi_Chu,
+
+                    Version = newVersion,
+                    IsLatest = true,
+                    Updated_At = DateTime.UtcNow
                 };
 
                 await _repoxnk.Add(log);
-
-                // 6. SAVE ALL
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 

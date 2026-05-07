@@ -18,7 +18,10 @@ namespace BaiTapThucTapBackend.Repositories
             .Include(x => x.NhaCungCap)
             .Include(x => x.Kho)
             .Include(x => x.ChiTiets).ToListAsync();
-        public async Task<NhapKho> GetById(int id) => await _context.NhapKhos.Include(x => x.ChiTiets).FirstAsync(x => x.Id == id);
+        public async Task<NhapKho> GetById(int id) => await _context.NhapKhos
+            .Include(x => x.Kho)
+            .Include(x => x.NhaCungCap)
+            .Include(x => x.ChiTiets).ThenInclude(ct => ct.SanPham).ThenInclude(sp => sp.DonViTinh).FirstAsync(x => x.Id == id);
 
         public async Task<bool> ExistsSoPhieu(string sophieu)
         {

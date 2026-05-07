@@ -26,6 +26,24 @@ namespace BaiTapThucTapBackend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<XNKNhapKho>()
+    .HasOne(x => x.NhapKho)
+    .WithMany()
+    .HasForeignKey(x => x.Nhap_Kho_ID)
+    .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<XNKNhapKho>()
+                .HasOne(x => x.Kho)
+                .WithMany()
+                .HasForeignKey(x => x.Kho_ID)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<XNKNhapKho>()
+                .HasOne(x => x.NhaCungCap)
+                .WithMany()
+                .HasForeignKey(x => x.NCC_ID)
+                .OnDelete(DeleteBehavior.NoAction);
+
             // Unique
             modelBuilder.Entity<DonViTinh>()
                 .HasIndex(x => x.Ten_Don_Vi_Tinh).IsUnique();
