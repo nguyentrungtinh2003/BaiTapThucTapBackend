@@ -6,6 +6,9 @@ namespace BaiTapThucTapBackend.Services.Interface
     {
         Task<List<XuatKhoDto>> GetAll();
         Task<XuatKhoDto> Create(CreateXuatKhoRequest request);
+
+        Task<XuatKhoDto> GetById(int id);
+        Task UpdateDetails(int id, XuatKhoDetailDto entity);
         Task Delete(int id);
     }
 }

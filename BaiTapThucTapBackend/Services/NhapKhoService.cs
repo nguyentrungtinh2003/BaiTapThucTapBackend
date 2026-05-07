@@ -62,7 +62,7 @@ namespace BaiTapThucTapBackend.Services
 
 			return result;
 		}
-
+		// print
         public async Task<NhapKhoDto> GetById(int id)
         {
             var header = await _context.XNKNhapKhos
@@ -107,7 +107,7 @@ namespace BaiTapThucTapBackend.Services
         public async Task<NhapKhoDto> Create(CreateNhapKhoRequest request)
 		{
 			// 🔥 VALIDATE
-			if (string.IsNullOrEmpty(request.So_Phieu_Nhap_Kho))
+			if (string.IsNullOrEmpty(request.So_Phieu_Nhap_Kho?.Trim()))
 				throw new Exception("Số phiếu nhập kho không được rỗng");
 
 			if (request.Kho_ID <= 0)
@@ -136,7 +136,7 @@ namespace BaiTapThucTapBackend.Services
 				var log = new XNKNhapKho
 				{
 					Nhap_Kho_ID = entity.Id,
-					So_Phieu_Nhap_Kho = entity.So_Phieu_Nhap_Kho,
+					So_Phieu_Nhap_Kho = entity.So_Phieu_Nhap_Kho.Trim(),
 					Kho_ID = entity.Kho_ID,
 					NCC_ID = entity.NCC_ID,
 					Ngay_Nhap_Kho = entity.Ngay_Nhap_Kho,

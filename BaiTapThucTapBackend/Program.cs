@@ -49,6 +49,7 @@ builder.Services.AddScoped<INhapKhoRepository, NhapKhoRepository>();
 builder.Services.AddScoped<INhapKhoService, NhapKhoService>();
 
 builder.Services.AddScoped<INhapKhoDetailRepository, NhapKhoDetailRepository>();
+builder.Services.AddScoped<INhapKhoDetailService, NhapKhoDetailService>();
 
 builder.Services.AddScoped<IXNKNhapKhoDetailRepository, XNKNhapKhoDetailRepository>();
 builder.Services.AddScoped<IXNKNhapKhoDetailService, XNKNhapKhoDetailService>();
@@ -58,6 +59,12 @@ builder.Services.AddScoped<IXNKNhapKhoService, XNKNhapKhoService>();
 
 builder.Services.AddScoped<IXuatKhoRepository, XuatKhoRepository>();
 builder.Services.AddScoped<IXuatKhoService, XuatKhoService>();
+
+builder.Services.AddScoped<IXNKXuatKhoRepository, XNKXuatKhoRepository>();
+builder.Services.AddScoped<IXNKXuatKhoService, XNKXuatKhoService>();
+
+builder.Services.AddScoped<IXuatKhoDetailRepository, XuatKhoDetailRepository>();
+builder.Services.AddScoped<IXuatKhoDetailService, XuatKhoDetailService>();
 
 
 // authen---

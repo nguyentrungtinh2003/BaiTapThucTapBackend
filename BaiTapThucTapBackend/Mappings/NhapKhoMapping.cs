@@ -39,7 +39,7 @@ public static class NhapKhoMapping
                 Nhap_Kho_ID = d.Nhap_Kho_ID,
                 San_Pham_ID = d.San_Pham_ID,
                 Ma_San_Pham = d.SanPham?.Ma_San_Pham,
-                Ten_San_Pham = d.SanPham.Ten_San_Pham,
+                Ten_San_Pham = d.SanPham?.Ten_San_Pham,
                 Ten_Don_Vi_Tinh = d.SanPham?.DonViTinh?.Ten_Don_Vi_Tinh,
                 SL_Nhap = d.SL_Nhap,
                 Don_Gia_Nhap = d.Don_Gia_Nhap

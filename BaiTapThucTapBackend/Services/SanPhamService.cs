@@ -26,11 +26,11 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<SanPhamDto> Create(CreateSanPhamRequest request)
         {
-            if (string.IsNullOrEmpty(request.Ma_San_Pham))
+            if (string.IsNullOrEmpty(request.Ma_San_Pham?.Trim()))
             {
                 throw new Exception("Mã sản phẩm không được rỗng");
             }
-            if (string.IsNullOrEmpty(request.Ten_San_Pham))
+            if (string.IsNullOrEmpty(request.Ten_San_Pham?.Trim()))
             {
                 throw new Exception("Tên sản phẩm không được rỗng");
             }
@@ -55,8 +55,8 @@ namespace BaiTapThucTapBackend.Services
 
             var entity = new SanPham
             {
-                Ma_San_Pham = request.Ma_San_Pham,
-                Ten_San_Pham = request.Ten_San_Pham,
+                Ma_San_Pham = request.Ma_San_Pham.Trim(),
+                Ten_San_Pham = request.Ten_San_Pham.Trim(),
                 Loai_San_Pham_ID = request.Loai_San_Pham_ID,
                 Don_Vi_Tinh_ID = request.Don_Vi_Tinh_ID,
                 Ghi_Chu = request.Ghi_Chu
@@ -74,8 +74,8 @@ namespace BaiTapThucTapBackend.Services
                 throw new Exception("Không tìm thấy sản phẩm");
             }
 
-            entity.Ma_San_Pham = request.Ma_San_Pham;
-            entity.Ten_San_Pham = request.Ten_San_Pham;
+            entity.Ma_San_Pham = request.Ma_San_Pham?.Trim();
+            entity.Ten_San_Pham = request.Ten_San_Pham?.Trim();
             entity.Loai_San_Pham_ID = request.Loai_San_Pham_ID;
             entity.Don_Vi_Tinh_ID = request.Don_Vi_Tinh_ID;
             entity.Ghi_Chu = request.Ghi_Chu;

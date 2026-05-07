@@ -28,8 +28,8 @@ namespace BaiTapThucTapBackend.Services
 
             var entity = new Kho
             {
-                Ten_Kho = request.Ten_Kho,
-                Ghi_Chu = request.Ghi_Chu,
+                Ten_Kho = request.Ten_Kho?.Trim(),
+                Ghi_Chu = request.Ghi_Chu?.Trim(),
             };
 
             await _repo.Add(entity);
@@ -44,8 +44,8 @@ namespace BaiTapThucTapBackend.Services
                 throw new Exception("Không tịm thấy kho");
             }
 
-            entity.Ten_Kho = request.Ten_Kho;
-            entity.Ghi_Chu = request.Ghi_Chu;
+            entity.Ten_Kho = request.Ten_Kho?.Trim();
+            entity.Ghi_Chu = request.Ghi_Chu?.Trim();
 
             await _repo.Update(entity);
             return entity.ToDto();

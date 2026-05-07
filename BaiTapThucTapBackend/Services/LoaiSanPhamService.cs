@@ -33,9 +33,9 @@ namespace BaiTapThucTapBackend.Services
 
             var entity = new LoaiSanPham
             {
-                Ma_LSP = request.Ma_LSP,
-                Ten_LSP = request.Ten_LSP,
-                Ghi_Chu = request.Ghi_Chu
+                Ma_LSP = request.Ma_LSP?.Trim(),
+                Ten_LSP = request.Ten_LSP?.Trim(),
+                Ghi_Chu = request.Ghi_Chu?.Trim(),
             };
 
             await _repo.Add(entity);
@@ -51,9 +51,9 @@ namespace BaiTapThucTapBackend.Services
                 throw new Exception("Không tìm thấy");
             }
 
-            entity.Ma_LSP = request.Ma_LSP;
-            entity.Ten_LSP = request.Ten_LSP;
-            entity.Ghi_Chu = request.Ghi_Chu;
+            entity.Ma_LSP = request.Ma_LSP?.Trim();
+            entity.Ten_LSP = request.Ten_LSP?.Trim();
+            entity.Ghi_Chu = request.Ghi_Chu?.Trim();
 
             await _repo.Update(entity);
             return entity.ToDto();

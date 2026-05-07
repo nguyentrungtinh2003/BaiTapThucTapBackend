@@ -4,6 +4,7 @@ using BaiTapThucTapBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BaiTapThucTapBackend.Migrations
 {
     [DbContext(typeof(AppDbcontext))]
-    partial class AppDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20260507025033_XNKXuatKho")]
+    partial class XNKXuatKho
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -328,77 +331,6 @@ namespace BaiTapThucTapBackend.Migrations
                     b.ToTable("XNKNhapKhoChiTiets");
                 });
 
-            modelBuilder.Entity("BaiTapThucTapBackend.Models.XNKXuatKho", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Ghi_Chu")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsLatest")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Kho_ID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Ngay_Xuat_Kho")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("So_Phieu_Xuat_Kho")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Updated_At")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Xuat_Kho_ID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Kho_ID");
-
-                    b.HasIndex("Xuat_Kho_ID");
-
-                    b.ToTable("XNKXuatKhos");
-                });
-
-            modelBuilder.Entity("BaiTapThucTapBackend.Models.XNKXuatKhoDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Don_Gia_Xuat")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("SL_Xuat")
-                        .HasColumnType("int");
-
-                    b.Property<int>("San_Pham_ID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("XNKXuat_Kho_ID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("San_Pham_ID");
-
-                    b.HasIndex("XNKXuat_Kho_ID");
-
-                    b.ToTable("XNKXuatKhoChiTiets");
-                });
-
             modelBuilder.Entity("BaiTapThucTapBackend.Models.XuatKho", b =>
                 {
                     b.Property<int>("Id")
@@ -447,17 +379,12 @@ namespace BaiTapThucTapBackend.Migrations
                     b.Property<int>("San_Pham_ID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("XNKXuatKhoId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Xuat_Kho_ID")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("San_Pham_ID");
-
-                    b.HasIndex("XNKXuatKhoId");
 
                     b.HasIndex("Xuat_Kho_ID");
 
@@ -578,44 +505,6 @@ namespace BaiTapThucTapBackend.Migrations
                     b.Navigation("XNKNhapKho");
                 });
 
-            modelBuilder.Entity("BaiTapThucTapBackend.Models.XNKXuatKho", b =>
-                {
-                    b.HasOne("BaiTapThucTapBackend.Models.Kho", "Kho")
-                        .WithMany()
-                        .HasForeignKey("Kho_ID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("BaiTapThucTapBackend.Models.XuatKho", "XuatKho")
-                        .WithMany()
-                        .HasForeignKey("Xuat_Kho_ID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Kho");
-
-                    b.Navigation("XuatKho");
-                });
-
-            modelBuilder.Entity("BaiTapThucTapBackend.Models.XNKXuatKhoDetail", b =>
-                {
-                    b.HasOne("BaiTapThucTapBackend.Models.SanPham", "SanPham")
-                        .WithMany()
-                        .HasForeignKey("San_Pham_ID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BaiTapThucTapBackend.Models.XNKXuatKho", "XNKXuatKho")
-                        .WithMany()
-                        .HasForeignKey("XNKXuat_Kho_ID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SanPham");
-
-                    b.Navigation("XNKXuatKho");
-                });
-
             modelBuilder.Entity("BaiTapThucTapBackend.Models.XuatKho", b =>
                 {
                     b.HasOne("BaiTapThucTapBackend.Models.Kho", "Kho")
@@ -634,10 +523,6 @@ namespace BaiTapThucTapBackend.Migrations
                         .HasForeignKey("San_Pham_ID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("BaiTapThucTapBackend.Models.XNKXuatKho", null)
-                        .WithMany("ChiTiets")
-                        .HasForeignKey("XNKXuatKhoId");
 
                     b.HasOne("BaiTapThucTapBackend.Models.XuatKho", "XuatKho")
                         .WithMany("ChiTiets")
@@ -661,11 +546,6 @@ namespace BaiTapThucTapBackend.Migrations
                 });
 
             modelBuilder.Entity("BaiTapThucTapBackend.Models.XNKNhapKho", b =>
-                {
-                    b.Navigation("ChiTiets");
-                });
-
-            modelBuilder.Entity("BaiTapThucTapBackend.Models.XNKXuatKho", b =>
                 {
                     b.Navigation("ChiTiets");
                 });

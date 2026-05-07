@@ -9,7 +9,7 @@
 
         public int Kho_ID { get; set; }
 
-        public string Ten_Kho { get; set; }
+        public string? Ten_Kho { get; set; }
         public int NCC_ID { get; set; }
         public string Ten_NCC { get; set; }
 

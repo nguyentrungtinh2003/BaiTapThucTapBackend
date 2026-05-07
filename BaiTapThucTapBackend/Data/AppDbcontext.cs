@@ -18,10 +18,10 @@ namespace BaiTapThucTapBackend.Data
 
         public DbSet<XNKNhapKho> XNKNhapKhos { get; set; }
         public DbSet<NhapKhoDetail> NhapKhoChiTiets { get; set; }
-
-        public DbSet<XuatKho> XuatKhos { get; set; }
-
         public DbSet<XNKNhapKhoDetail> XNKNhapKhoChiTiets { get; set; }
+        public DbSet<XuatKho> XuatKhos { get; set; }
+        public DbSet<XNKXuatKho> XNKXuatKhos { get; set; }
+        public DbSet<XNKXuatKhoDetail> XNKXuatKhoChiTiets { get; set; }
         public DbSet<XuatKhoDetail> XuatKhoChiTiets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,6 +42,19 @@ namespace BaiTapThucTapBackend.Data
                 .HasOne(x => x.NhaCungCap)
                 .WithMany()
                 .HasForeignKey(x => x.NCC_ID)
+                .OnDelete(DeleteBehavior.NoAction);
+
+
+            modelBuilder.Entity<XNKXuatKho>()
+    .HasOne(x => x.XuatKho)
+    .WithMany()
+    .HasForeignKey(x => x.Xuat_Kho_ID)
+    .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<XNKXuatKho>()
+                .HasOne(x => x.Kho)
+                .WithMany()
+                .HasForeignKey(x => x.Kho_ID)
                 .OnDelete(DeleteBehavior.NoAction);
 
             // Unique

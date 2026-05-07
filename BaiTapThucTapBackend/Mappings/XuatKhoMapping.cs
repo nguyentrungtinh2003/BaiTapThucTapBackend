@@ -35,6 +35,9 @@ public static class XuatKhoMapping
             {
                 Xuat_Kho_ID = d.Xuat_Kho_ID,
                 San_Pham_ID = d.San_Pham_ID,
+                Ma_San_Pham = d.SanPham?.Ma_San_Pham,
+                Ten_San_Pham = d.SanPham?.Ten_San_Pham,
+                Ten_Don_Vi_Tinh = d.SanPham?.DonViTinh?.Ten_Don_Vi_Tinh,
                 SL_Xuat = d.SL_Xuat,
                 Don_Gia_Xuat = d.Don_Gia_Xuat
 

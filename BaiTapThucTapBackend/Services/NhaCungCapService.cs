@@ -33,9 +33,9 @@ namespace BaiTapThucTapBackend.Services
 
             var entity = new NhaCungCap
             {
-                Ma_NCC = request.Ma_NCC,
-                Ten_NCC = request.Ten_NCC,
-                Ghi_Chu = request.Ghi_Chu
+                Ma_NCC = request.Ma_NCC.Trim(),
+                Ten_NCC = request.Ten_NCC.Trim(),
+                Ghi_Chu = request.Ghi_Chu?.Trim()
             };
 
             await _repo.Add(entity);
@@ -49,9 +49,9 @@ namespace BaiTapThucTapBackend.Services
             {
                 throw new Exception("Không tịm thấy nhà cung cấp");
             }
-            entity.Ma_NCC = request.Ma_NCC;
-            entity.Ten_NCC = request.Ten_NCC;
-            entity.Ghi_Chu = request.Ghi_Chu;
+            entity.Ma_NCC = request.Ma_NCC?.Trim();
+            entity.Ten_NCC = request.Ten_NCC.Trim();
+            entity.Ghi_Chu = request.Ghi_Chu?.Trim();
 
             await _repo.Update(entity);
             return entity.ToDto();
