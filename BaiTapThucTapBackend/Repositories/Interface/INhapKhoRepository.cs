@@ -1,4 +1,5 @@
-﻿using BaiTapThucTapBackend.Models;
+﻿using BaiTapThucTapBackend.DTOs;
+using BaiTapThucTapBackend.Models;
 
 namespace BaiTapThucTapBackend.Repositories.Interface
 {
@@ -14,5 +15,7 @@ namespace BaiTapThucTapBackend.Repositories.Interface
 
         Task Update(NhapKho entity);
         Task Delete(NhapKho entity);
+
+        Task<List<BaoCaoNhapKhoDto>> BaoCaoChiTietHangNhap(DateTime startDate, DateTime endDate, int userKhoId, bool isAdmin);
     }
 }

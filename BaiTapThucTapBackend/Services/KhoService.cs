@@ -19,6 +19,15 @@ namespace BaiTapThucTapBackend.Services
             var list = await _repo.GetAll();
             return list.Select(x => x.ToDto()).ToList();
         }
+        public async Task<KhoDto> GetById(int id)
+        {
+            var result =  await _repo.GetById(id);
+            if(result == null)
+            {
+                throw new Exception("Khong tim thay");
+            }
+            return result.ToDto();
+        }
         public async Task<KhoDto> Create(CreateKhoRequest request)
         {
             if (string.IsNullOrEmpty(request.Ten_Kho))

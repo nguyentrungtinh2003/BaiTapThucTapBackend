@@ -20,6 +20,12 @@ namespace BaiTapThucTapBackend.Controllers
             return Ok(await _service.GetAll());
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            return Ok(await _service.GetById(id));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateKhoRequest request)
         {

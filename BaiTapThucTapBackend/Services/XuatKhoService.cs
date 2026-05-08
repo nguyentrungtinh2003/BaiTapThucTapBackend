@@ -23,33 +23,61 @@ namespace BaiTapThucTapBackend.Services
         }
 
         // 🔥 Lấy dữ liệu HIỂN THỊ → từ XNK (IsLatest)
-        public async Task<List<XuatKhoDto>> GetAll()
+        public async Task<List<XuatKhoDto>> GetAll(int userKhoId, bool isAdmin)
         {
-            var headers = await _context.XNKXuatKhos
-    .Where(x => x.IsLatest)
-    .Include(x => x.Kho)
-    .ToListAsync();
+            var query = _context.XNKXuatKhos
+                .Where(x => x.IsLatest)
+                .Include(x => x.Kho)
+                .AsQueryable();
 
-            var details = await _context.XuatKhoChiTiets.ToListAsync();
+            // USER -> chỉ xem kho của mình
+            if (!isAdmin)
+            {
+                query = query.Where(x => x.Kho_ID == userKhoId);
+            }
+
+            var headers = await query.ToListAsync();
+
+            // lấy id phiếu xuất
+            var xuatKhoIds = headers
+                .Select(x => x.Xuat_Kho_ID)
+                .ToList();
+
+            // chỉ load detail liên quan
+            var details = await _context.XuatKhoChiTiets
+                .Where(x => xuatKhoIds.Contains(x.Xuat_Kho_ID))
+                .ToListAsync();
 
             var result = headers.Select(x => new XuatKhoDto
             {
                 Id = x.Xuat_Kho_ID,
+
                 So_Phieu_Xuat_Kho = x.So_Phieu_Xuat_Kho,
+
                 Kho_ID = x.Kho_ID,
+
                 Ten_Kho = x.Kho?.Ten_Kho,
+
                 Ngay_Xuat_Kho = x.Ngay_Xuat_Kho,
+
                 Ghi_Chu = x.Ghi_Chu,
+
                 ChiTiets = details
                     .Where(d => d.Xuat_Kho_ID == x.Xuat_Kho_ID)
                     .Select(d => new XuatKhoDetailDto
                     {
                         Id = d.Id,
+
                         Xuat_Kho_ID = d.Xuat_Kho_ID,
+
                         San_Pham_ID = d.San_Pham_ID,
+
                         SL_Xuat = d.SL_Xuat,
+
                         Don_Gia_Xuat = d.Don_Gia_Xuat
+
                     }).ToList()
+
             }).ToList();
 
             return result;
@@ -168,5 +196,7 @@ namespace BaiTapThucTapBackend.Services
             }
             await _repo.Delete(exists);
         }
+        public async Task<List<BaoCaoXuatKhoDto>> BaoCaoChiTietHangXuat(DateTime startDate, DateTime endDate, int userKhoId, bool isAdmin)
+            => await _repo.BaoCaoChiTietHangXuat(startDate, endDate, userKhoId, isAdmin);
     }
 }

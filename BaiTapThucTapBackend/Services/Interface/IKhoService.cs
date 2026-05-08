@@ -5,6 +5,7 @@ namespace BaiTapThucTapBackend.Services.Interface
     public interface IKhoService
     {
         Task<List<KhoDto>> GetAll();
+        Task<KhoDto> GetById(int id);
         Task<KhoDto> Create(CreateKhoRequest request);
         Task<KhoDto> Update(int id,CreateKhoRequest request);
 

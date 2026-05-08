@@ -16,9 +16,9 @@ namespace BaiTapThucTapBackend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int userKhoId, bool isAdmin)
         {
-            return Ok(await _service.GetAll());
+            return Ok(await _service.GetAll( userKhoId, isAdmin));
         }
 
         [HttpPost]
@@ -44,6 +44,12 @@ namespace BaiTapThucTapBackend.Controllers
         {
             await _service.Delete(id);
             return Ok();
+        }
+
+        [HttpGet("bao-cao-chi-tiet-hang-nhap")]
+        public async Task<IActionResult> BaoCaoChiTietHangNhap([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int userKhoId, [FromQuery] bool isAdmin)
+        {
+            return Ok(await _service.BaoCaoChiTietHangNhap(startDate, endDate, userKhoId, isAdmin));
         }
     }
 }

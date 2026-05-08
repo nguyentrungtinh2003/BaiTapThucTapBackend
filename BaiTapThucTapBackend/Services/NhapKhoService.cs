@@ -5,6 +5,7 @@ using BaiTapThucTapBackend.Repositories;
 using BaiTapThucTapBackend.Repositories.Interface;
 using BaiTapThucTapBackend.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BaiTapThucTapBackend.Services
 {
@@ -28,40 +29,64 @@ namespace BaiTapThucTapBackend.Services
 		}
 
 		// 🔥 Lấy dữ liệu HIỂN THỊ → từ XNK (IsLatest)
-		public async Task<List<NhapKhoDto>> GetAll()
+		public async Task<List<NhapKhoDto>> GetAll(int userKhoId, bool isAdmin)
 		{
-			var headers = await _context.XNKNhapKhos
-	.Where(x => x.IsLatest)
-	.Include(x => x.Kho)
-	.Include(x => x.NhaCungCap)
-	.ToListAsync();
+            // admin
+            var query = _context.XNKNhapKhos
+          .Where(x => x.IsLatest)
+          .Include(x => x.Kho)
+          .Include(x => x.NhaCungCap)
+          .AsQueryable();
 
-			var details = await _context.NhapKhoChiTiets.ToListAsync();
+            // USER -> chỉ xem kho của mình
+            if (!isAdmin)
+            {
+                query = query.Where(x => x.Kho_ID == userKhoId);
+            }
 
-			var result = headers.Select(x => new NhapKhoDto
-			{
-				Id = x.Nhap_Kho_ID,
-				So_Phieu_Nhap_Kho = x.So_Phieu_Nhap_Kho,
-				Kho_ID = x.Kho_ID,
-				Ten_Kho = x.Kho?.Ten_Kho,
-				NCC_ID = x.NCC_ID,
-				Ten_NCC = x.NhaCungCap?.Ten_NCC,
-				Ngay_Nhap_Kho = x.Ngay_Nhap_Kho,
-				Ghi_Chu = x.Ghi_Chu,
-				ChiTiets = details
-					.Where(d => d.Nhap_Kho_ID == x.Nhap_Kho_ID)
-					.Select(d => new NhapKhoDetailDto
-					{
-						Id = d.Id,
-						Nhap_Kho_ID = d.Nhap_Kho_ID,
-						San_Pham_ID = d.San_Pham_ID,
-						SL_Nhap = d.SL_Nhap,
-						Don_Gia_Nhap = d.Don_Gia_Nhap
-					}).ToList()
-			}).ToList();
+            var headers = await query.ToListAsync();
 
-			return result;
-		}
+            var details = await _context.NhapKhoChiTiets
+                .ToListAsync();
+
+            var result = headers.Select(x => new NhapKhoDto
+            {
+                Id = x.Nhap_Kho_ID,
+
+                So_Phieu_Nhap_Kho = x.So_Phieu_Nhap_Kho,
+
+                Kho_ID = x.Kho_ID,
+
+                Ten_Kho = x.Kho?.Ten_Kho,
+
+                NCC_ID = x.NCC_ID,
+
+                Ten_NCC = x.NhaCungCap?.Ten_NCC,
+
+                Ngay_Nhap_Kho = x.Ngay_Nhap_Kho,
+
+                Ghi_Chu = x.Ghi_Chu,
+
+                ChiTiets = details
+                    .Where(d => d.Nhap_Kho_ID == x.Nhap_Kho_ID)
+                    .Select(d => new NhapKhoDetailDto
+                    {
+                        Id = d.Id,
+
+                        Nhap_Kho_ID = d.Nhap_Kho_ID,
+
+                        San_Pham_ID = d.San_Pham_ID,
+
+                        SL_Nhap = d.SL_Nhap,
+
+                        Don_Gia_Nhap = d.Don_Gia_Nhap
+                    })
+                    .ToList()
+
+            }).ToList();
+
+            return result;
+        }
 		// print
         public async Task<NhapKhoDto> GetById(int id)
         {
@@ -183,5 +208,9 @@ namespace BaiTapThucTapBackend.Services
 
 			await _repo.Delete(entity);
 		}
+
+		public async Task<List<BaoCaoNhapKhoDto>> BaoCaoChiTietHangNhap(DateTime startDate, DateTime endDate, int userKhoId, bool isAdmin)
+			=> await _repo.BaoCaoChiTietHangNhap(startDate, endDate, userKhoId, isAdmin);
+		
 	}
 }
