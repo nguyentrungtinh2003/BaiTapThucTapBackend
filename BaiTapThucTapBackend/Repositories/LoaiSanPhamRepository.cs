@@ -1,6 +1,7 @@
 ﻿using BaiTapThucTapBackend.Data;
 using BaiTapThucTapBackend.Models;
 using BaiTapThucTapBackend.Repositories.Interface;
+using BaiTapThucTapBackend.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BaiTapThucTapBackend.Repositories
@@ -8,9 +9,11 @@ namespace BaiTapThucTapBackend.Repositories
     public class LoaiSanPhamRepository : ILoaiSanPhamRepository
     {
         private readonly AppDbcontext _context;
-        public LoaiSanPhamRepository(AppDbcontext context)
+        private readonly NormalizeService _normalizeService;
+        public LoaiSanPhamRepository(AppDbcontext context,NormalizeService normalizeService)
         {
             _context = context;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<LoaiSanPham>> GetAll() => await _context.LoaiSanPhams.ToListAsync();
@@ -34,7 +37,7 @@ namespace BaiTapThucTapBackend.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> ExistsMa(string ma) => await _context.LoaiSanPhams.AnyAsync(x => x.Ma_LSP == ma);
-        public async Task<bool> ExistsTen(string ten) => await _context.LoaiSanPhams.AnyAsync(x => x.Ten_LSP == ten);
+        public async Task<bool> ExistsMa(string ma) => await _context.LoaiSanPhams.AnyAsync(x => x.Ma_LSP.ToLower() == _normalizeService.Normalize(ma).ToLower());
+        public async Task<bool> ExistsTen(string ten) => await _context.LoaiSanPhams.AnyAsync(x => x.Ten_LSP.ToLower() == _normalizeService.Normalize(ten).ToLower());
     }
 }

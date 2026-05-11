@@ -11,5 +11,12 @@ namespace BaiTapThucTapBackend.Repositories.Interface
         Task Delete(KhoUser entity);
 
         Task<bool> Exists(string Ma_Dang_Nhap, int KhoID);
+
+        //---
+
+        Task<List<KhoUser>> GetByUser(string Ma_Dang_Nhap);
+
+        Task<KhoUser?> GetByKey(string Ma_Dang_Nhap, int Kho_ID);
+
     }
 }

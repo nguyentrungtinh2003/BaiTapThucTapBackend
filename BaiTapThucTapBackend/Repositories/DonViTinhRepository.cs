@@ -2,15 +2,18 @@
 using BaiTapThucTapBackend.Models;
 using BaiTapThucTapBackend.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using BaiTapThucTapBackend.Services;
 
 namespace BaiTapThucTapBackend.Repositories
 {
     public class DonViTinhRepository : IDonViTinhRepository
     {
         private readonly AppDbcontext _context;
-        public DonViTinhRepository(AppDbcontext context)
+        private readonly NormalizeService _normalizeService;
+        public DonViTinhRepository(AppDbcontext context,NormalizeService normalizeService)
         {
             _context = context;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<DonViTinh>> GetAll() => await _context.DonViTinhs.ToListAsync();
@@ -35,6 +38,6 @@ namespace BaiTapThucTapBackend.Repositories
 
         }
 
-        public async Task<bool> Exists(string ten) => await _context.DonViTinhs.AnyAsync(x => x.Ten_Don_Vi_Tinh == ten);
+        public async Task<bool> Exists(string ten) => await _context.DonViTinhs.AnyAsync(x => x.Ten_Don_Vi_Tinh.ToLower() == _normalizeService.Normalize(ten).ToLower());
     }
 }

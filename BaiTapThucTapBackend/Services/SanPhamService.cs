@@ -11,11 +11,13 @@ namespace BaiTapThucTapBackend.Services
     {
         private readonly ISanPhamRepository _repo;
         private readonly AppDbcontext _context;
+        private readonly NormalizeService _normalizeService;
 
-        public SanPhamService(ISanPhamRepository repo, AppDbcontext context)
+        public SanPhamService(ISanPhamRepository repo, AppDbcontext context,NormalizeService normalizeService)
         {
             _repo = repo;
             _context = context;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<SanPhamDto>> GetAll()
@@ -26,11 +28,15 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<SanPhamDto> Create(CreateSanPhamRequest request)
         {
-            if (string.IsNullOrEmpty(request.Ma_San_Pham?.Trim()))
+            request.Ma_San_Pham = _normalizeService.Normalize(request.Ma_San_Pham);
+            request.Ten_San_Pham = _normalizeService.Normalize(request.Ten_San_Pham);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
+            if (string.IsNullOrEmpty(request.Ma_San_Pham))
             {
                 throw new Exception("Mã sản phẩm không được rỗng");
             }
-            if (string.IsNullOrEmpty(request.Ten_San_Pham?.Trim()))
+            if (string.IsNullOrEmpty(request.Ten_San_Pham))
             {
                 throw new Exception("Tên sản phẩm không được rỗng");
             }
@@ -44,7 +50,7 @@ namespace BaiTapThucTapBackend.Services
             }
             if(await _repo.ExistsMa(request.Ma_San_Pham))
             {
-                throw new Exception("Mă đă tồn tại");
+                throw new Exception("Mă sản phẩm đă tồn tại");
             }
 
             var lspExists = await _context.LoaiSanPhams.AnyAsync(x => x.Id == request.Loai_San_Pham_ID);
@@ -55,8 +61,8 @@ namespace BaiTapThucTapBackend.Services
 
             var entity = new SanPham
             {
-                Ma_San_Pham = request.Ma_San_Pham.Trim(),
-                Ten_San_Pham = request.Ten_San_Pham.Trim(),
+                Ma_San_Pham = request.Ma_San_Pham,
+                Ten_San_Pham = request.Ten_San_Pham,
                 Loai_San_Pham_ID = request.Loai_San_Pham_ID,
                 Don_Vi_Tinh_ID = request.Don_Vi_Tinh_ID,
                 Ghi_Chu = request.Ghi_Chu
@@ -68,14 +74,18 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<SanPhamDto> Update(int id, CreateSanPhamRequest request)
         {
+            request.Ma_San_Pham = _normalizeService.Normalize(request.Ma_San_Pham);
+            request.Ten_San_Pham = _normalizeService.Normalize(request.Ten_San_Pham);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
                 throw new Exception("Không tìm thấy sản phẩm");
             }
 
-            entity.Ma_San_Pham = request.Ma_San_Pham?.Trim();
-            entity.Ten_San_Pham = request.Ten_San_Pham?.Trim();
+            entity.Ma_San_Pham = request.Ma_San_Pham;
+            entity.Ten_San_Pham = request.Ten_San_Pham;
             entity.Loai_San_Pham_ID = request.Loai_San_Pham_ID;
             entity.Don_Vi_Tinh_ID = request.Don_Vi_Tinh_ID;
             entity.Ghi_Chu = request.Ghi_Chu;

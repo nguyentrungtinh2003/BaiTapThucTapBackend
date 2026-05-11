@@ -13,13 +13,14 @@ namespace BaiTapThucTapBackend.Services
         private readonly IXuatKhoDetailRepository _repodetail;
         private readonly IXNKXuatKhoRepository _xnkrepo;
         private readonly AppDbcontext _context;
-
-        public XuatKhoService(IXuatKhoRepository repo, AppDbcontext context, IXNKXuatKhoRepository xnkrepo, IXuatKhoDetailRepository repodetail)
+        private readonly NormalizeService _normalizeService;
+        public XuatKhoService(IXuatKhoRepository repo, AppDbcontext context, IXNKXuatKhoRepository xnkrepo, IXuatKhoDetailRepository repodetail, NormalizeService normalizeService)
         {
             _repo = repo;
             _context = context;
             _xnkrepo = xnkrepo;
             _repodetail = repodetail;
+            _normalizeService = normalizeService;
         }
 
         // 🔥 Lấy dữ liệu HIỂN THỊ → từ XNK (IsLatest)
@@ -123,8 +124,10 @@ namespace BaiTapThucTapBackend.Services
         }
         public async Task<XuatKhoDto> Create(CreateXuatKhoRequest request)
         {
+            request.So_Phieu_Xuat_Kho = _normalizeService.Normalize(request.So_Phieu_Xuat_Kho);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
             // 🔥 VALIDATE
-            if (string.IsNullOrEmpty(request.So_Phieu_Xuat_Kho?.Trim()))
+            if (string.IsNullOrEmpty(request.So_Phieu_Xuat_Kho))
                 throw new Exception("Số phiếu xuất kho không được rỗng");
 
             if (request.Kho_ID <= 0)
@@ -150,14 +153,14 @@ namespace BaiTapThucTapBackend.Services
                 var log = new XNKXuatKho
                 {
                     Xuat_Kho_ID = entity.Id,
-                    So_Phieu_Xuat_Kho = entity.So_Phieu_Xuat_Kho.Trim(),
+                    So_Phieu_Xuat_Kho = entity.So_Phieu_Xuat_Kho,
                     Kho_ID = entity.Kho_ID,
                     Ngay_Xuat_Kho = entity.Ngay_Xuat_Kho,
                     Ghi_Chu = entity.Ghi_Chu,
 
                     Version = 1,
                     IsLatest = true,
-                    Updated_At = DateTime.UtcNow
+                    Updated_At = DateTime.Now
                 };
 
                 await _xnkrepo.Add(log);
@@ -177,9 +180,18 @@ namespace BaiTapThucTapBackend.Services
         public async Task UpdateDetails(int id, XuatKhoDetailDto entity)
         {
             var item = await _context.XuatKhoChiTiets.FindAsync(id);
+
             if (item == null)
             {
                 throw new Exception("Không tìm thấy");
+            }
+            if(entity.SL_Xuat <= 0)
+            {
+                throw new Exception("Số lượng xuất không hợp lệ");
+            }
+            if(entity.Don_Gia_Xuat <= 0)
+            {
+                throw new Exception("Đơn giá xuất không hợp lệ");
             }
 
             item.SL_Xuat = entity.SL_Xuat;
@@ -189,12 +201,27 @@ namespace BaiTapThucTapBackend.Services
         }
         public async Task Delete(int id)
         {
-            var exists = await _repo.GetById(id);
-            if (exists == null)
-            {
-                throw new Exception("Không tìm thấy");
-            }
-            await _repo.Delete(exists);
+            var entity = await _repo.GetById(id);
+
+            if (entity == null)
+                throw new Exception("Không tìm thấy xuất kho");
+
+            // xóa detail
+            var details = _context.XuatKhoChiTiets
+                .Where(x => x.Xuat_Kho_ID == id);
+
+            _context.XuatKhoChiTiets.RemoveRange(details);
+
+            // xóa log XNK
+            var logs = _context.XNKXuatKhos
+                .Where(x => x.Xuat_Kho_ID == id);
+
+            _context.XNKXuatKhos.RemoveRange(logs);
+
+            // xóa header
+            _context.XuatKhos.Remove(entity);
+
+            await _context.SaveChangesAsync();
         }
         public async Task<List<BaoCaoXuatKhoDto>> BaoCaoChiTietHangXuat(DateTime startDate, DateTime endDate, int userKhoId, bool isAdmin)
             => await _repo.BaoCaoChiTietHangXuat(startDate, endDate, userKhoId, isAdmin);

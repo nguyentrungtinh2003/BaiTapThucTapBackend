@@ -11,10 +11,12 @@ namespace BaiTapThucTapBackend.Repositories
     public class XuatKhoRepository : IXuatKhoRepository
     {
         private readonly AppDbcontext _context;
+        private readonly NormalizeService _normalizeService;
 
-        public XuatKhoRepository(AppDbcontext context)
+        public XuatKhoRepository(AppDbcontext context, NormalizeService normalizeService)
         {
             _context = context;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<XuatKho>> GetAll() => await _context.XuatKhos.
@@ -25,7 +27,7 @@ namespace BaiTapThucTapBackend.Repositories
 
         public async Task<bool> ExistsSoPhieu(string sophieu)
         {
-            return await _context.XuatKhos.AnyAsync(x => x.So_Phieu_Xuat_Kho == sophieu);
+            return await _context.XuatKhos.AnyAsync(x => x.So_Phieu_Xuat_Kho.ToLower() == _normalizeService.Normalize(sophieu).ToLower());
          
         }
 

@@ -21,21 +21,23 @@ namespace BaiTapThucTapBackend.Controllers
             return Ok(await _service.GetAll());
         }
 
+        [HttpGet("{Ma_Dang_Nhap}")]
+        public async Task<IActionResult> GetByUser(string Ma_Dang_Nhap)
+        {
+            return Ok(await _service.GetByUser(Ma_Dang_Nhap));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateKhoUserRequest request)
         {
-            var error = await _service.Create(request);
-            if(error != null)
-            {
-                return BadRequest(error);
-            }
+            await _service.Create(request);
             return Ok("Tao thanh cong");
         }
 
-        [HttpDelete("{MaDangNhap}/{KhoID}")]
-        public async Task<IActionResult> Delete(string MaDangNhap, int KhoID)
+        [HttpDelete("{Ma_Dang_Nhap}/{Kho_ID}")]
+        public async Task<IActionResult> Delete(string Ma_Dang_Nhap, int Kho_ID)
         {
-            await _service.Delete(MaDangNhap, KhoID);
+            await _service.Delete(Ma_Dang_Nhap, Kho_ID);
             return Ok("Xoa thanh cong");
         }
     }

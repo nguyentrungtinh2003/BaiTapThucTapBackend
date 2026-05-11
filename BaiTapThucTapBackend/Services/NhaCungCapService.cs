@@ -8,10 +8,12 @@ namespace BaiTapThucTapBackend.Services
     public class NhaCungCapService : INhaCungCapService
     {
         private readonly INhaCungCapRepository _repo;
+        private readonly NormalizeService _normalizeService;
 
-        public NhaCungCapService(INhaCungCapRepository repo)
+        public NhaCungCapService(INhaCungCapRepository repo, NormalizeService normalizeService)
         {
             _repo = repo;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<NhaCungCapDto>> GetAll()
@@ -22,6 +24,10 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<NhaCungCapDto> Create(CreateNhaCungCapRequest request)
         {
+            request.Ma_NCC = _normalizeService.Normalize(request.Ma_NCC);
+            request.Ten_NCC = _normalizeService.Normalize(request.Ten_NCC);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
             if (string.IsNullOrEmpty(request.Ma_NCC))
             {
                 throw new Exception("Mã nhà cung cấp không được rỗng");
@@ -31,11 +37,25 @@ namespace BaiTapThucTapBackend.Services
                 throw new Exception("Tên nhà cung cấp không dược rỗng");
             }
 
+            var existsMa = await _repo.ExistsMa(request.Ma_NCC);
+
+            if (existsMa)
+            {
+                throw new Exception("Mã nhà cung cấp đã tồn tại");
+            }
+
+            var existsTen = await _repo.ExistsTen(request.Ten_NCC);
+
+            if (existsTen)
+            {
+                throw new Exception("Tên nhà cung cấp đã tồn tại");
+            }
+
             var entity = new NhaCungCap
             {
-                Ma_NCC = request.Ma_NCC.Trim(),
-                Ten_NCC = request.Ten_NCC.Trim(),
-                Ghi_Chu = request.Ghi_Chu?.Trim()
+                Ma_NCC = request.Ma_NCC,
+                Ten_NCC = request.Ten_NCC,
+                Ghi_Chu = request.Ghi_Chu
             };
 
             await _repo.Add(entity);
@@ -44,14 +64,31 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<NhaCungCapDto> Update(int id, CreateNhaCungCapRequest request)
         {
+            request.Ma_NCC = _normalizeService.Normalize(request.Ma_NCC);
+            request.Ten_NCC = _normalizeService.Normalize(request.Ten_NCC);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
                 throw new Exception("Không tịm thấy nhà cung cấp");
             }
-            entity.Ma_NCC = request.Ma_NCC?.Trim();
-            entity.Ten_NCC = request.Ten_NCC.Trim();
-            entity.Ghi_Chu = request.Ghi_Chu?.Trim();
+            var existsMa = await _repo.ExistsMa(request.Ma_NCC);
+
+            if (existsMa)
+            {
+                throw new Exception("Mã nhà cung cấp đã tồn tại");
+            }
+
+            var existsTen = await _repo.ExistsTen(request.Ten_NCC);
+
+            if (existsTen)
+            {
+                throw new Exception("Tên nhà cung cấp đã tồn tại");
+            }
+            entity.Ma_NCC = request.Ma_NCC;
+            entity.Ten_NCC = request.Ten_NCC;
+            entity.Ghi_Chu = request.Ghi_Chu;
 
             await _repo.Update(entity);
             return entity.ToDto();
@@ -66,5 +103,6 @@ namespace BaiTapThucTapBackend.Services
             }
             await _repo.Delete(entity);
         }
+
     }
 }

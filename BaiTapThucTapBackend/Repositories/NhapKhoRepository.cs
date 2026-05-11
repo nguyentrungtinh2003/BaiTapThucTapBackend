@@ -13,10 +13,12 @@ namespace BaiTapThucTapBackend.Repositories
     public class NhapKhoRepository : INhapKhoRepository
     {
         private readonly AppDbcontext _context;
+        private readonly NormalizeService _normalizeService;
 
-        public NhapKhoRepository(AppDbcontext context)
+        public NhapKhoRepository(AppDbcontext context,NormalizeService normalizeService)
         {
             _context = context;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<NhapKho>> GetAll() => await _context.NhapKhos
@@ -30,7 +32,7 @@ namespace BaiTapThucTapBackend.Repositories
 
         public async Task<bool> ExistsSoPhieu(string sophieu)
         {
-            return await _context.NhapKhos.AnyAsync(x => x.So_Phieu_Nhap_Kho == sophieu);
+            return await _context.NhapKhos.AnyAsync(x => x.So_Phieu_Nhap_Kho.ToLower() == _normalizeService.Normalize(sophieu).ToLower());
         }
 
         public async Task Add(NhapKho entity)

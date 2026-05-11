@@ -7,10 +7,12 @@ namespace BaiTapThucTapBackend.Services
 {
     public class DonViTinhService : IDonViTinhService
     {
-        public readonly IDonViTinhRepository _repo;
-        public DonViTinhService(IDonViTinhRepository repo)
+        private readonly IDonViTinhRepository _repo;
+        private readonly NormalizeService _normalizeService;
+        public DonViTinhService(IDonViTinhRepository repo, NormalizeService normalizeService)
         {
             _repo = repo;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<DonViTinhDto>> GetAll()
@@ -21,20 +23,25 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<DonViTinhDto> Create(CreateDonViTinhRequest request)
         {
-            if(string.IsNullOrEmpty(request.Ten_Don_Vi_Tinh))
+
+            request.Ten_Don_Vi_Tinh = _normalizeService.Normalize(request.Ten_Don_Vi_Tinh);
+
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
+            if (string.IsNullOrEmpty(request.Ten_Don_Vi_Tinh))
             {
                 throw new Exception("Tên đơn vị tính không được rỗng");
             }
 
-            if(await _repo.Exists(request.Ten_Don_Vi_Tinh.Trim()))
+            if(await _repo.Exists(request.Ten_Don_Vi_Tinh))
             {
                 throw new Exception("Tên dơn vị tính đã tồn tại");
             }
 
             var entity = new DonViTinh
             {
-                Ten_Don_Vi_Tinh = request.Ten_Don_Vi_Tinh.Trim(),
-                Ghi_Chu = request.Ghi_Chu?.Trim(),
+                Ten_Don_Vi_Tinh = request.Ten_Don_Vi_Tinh,
+                Ghi_Chu = request.Ghi_Chu,
             };
 
             await _repo.Add(entity);
@@ -43,13 +50,16 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<DonViTinhDto> Update(int id, CreateDonViTinhRequest request)
         {
+            request.Ten_Don_Vi_Tinh = _normalizeService.Normalize(request.Ten_Don_Vi_Tinh);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
                 throw new Exception("Không tịm thấy đơn vị tính");
             }
-            entity.Ten_Don_Vi_Tinh = request.Ten_Don_Vi_Tinh?.Trim();
-            entity.Ghi_Chu = request.Ghi_Chu?.Trim();
+            entity.Ten_Don_Vi_Tinh = request.Ten_Don_Vi_Tinh;
+            entity.Ghi_Chu = request.Ghi_Chu;
 
             await _repo.Update(entity);
             return entity.ToDto();

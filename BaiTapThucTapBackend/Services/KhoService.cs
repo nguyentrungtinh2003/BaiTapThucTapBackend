@@ -8,10 +8,12 @@ namespace BaiTapThucTapBackend.Services
     public class KhoService : IKhoService
     {
         private readonly IKhoRepository _repo;
+        private readonly NormalizeService _normalizeService;
 
-        public KhoService(IKhoRepository repo)
+        public KhoService(IKhoRepository repo, NormalizeService normalizeService)
         {
             _repo = repo;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<KhoDto>> GetAll()
@@ -30,15 +32,23 @@ namespace BaiTapThucTapBackend.Services
         }
         public async Task<KhoDto> Create(CreateKhoRequest request)
         {
+            request.Ten_Kho = _normalizeService.Normalize(request.Ten_Kho);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
             if (string.IsNullOrEmpty(request.Ten_Kho))
             {
                 throw new Exception("Tên kho không được rỗng");
             }
 
+            if (await _repo.ExistsTen(request.Ten_Kho))
+            {
+                throw new Exception("Tên kho đã tồn tại");
+            }
+
             var entity = new Kho
             {
-                Ten_Kho = request.Ten_Kho?.Trim(),
-                Ghi_Chu = request.Ghi_Chu?.Trim(),
+                Ten_Kho = request.Ten_Kho,
+                Ghi_Chu = request.Ghi_Chu,
             };
 
             await _repo.Add(entity);
@@ -47,14 +57,27 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<KhoDto> Update(int id, CreateKhoRequest request)
         {
+            request.Ten_Kho = _normalizeService.Normalize(request.Ten_Kho);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
                 throw new Exception("Không tịm thấy kho");
             }
 
-            entity.Ten_Kho = request.Ten_Kho?.Trim();
-            entity.Ghi_Chu = request.Ghi_Chu?.Trim();
+            if (string.IsNullOrEmpty(request.Ten_Kho))
+            {
+                throw new Exception("Tên kho không được rỗng");
+            }
+
+            if (await _repo.ExistsTen(request.Ten_Kho))
+            {
+                throw new Exception("Tên kho đã tồn tại");
+            }
+
+            entity.Ten_Kho = request.Ten_Kho;
+            entity.Ghi_Chu = request.Ghi_Chu;
 
             await _repo.Update(entity);
             return entity.ToDto();

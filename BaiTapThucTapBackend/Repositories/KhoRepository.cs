@@ -1,6 +1,7 @@
 ﻿using BaiTapThucTapBackend.Data;
 using BaiTapThucTapBackend.Models;
 using BaiTapThucTapBackend.Repositories.Interface;
+using BaiTapThucTapBackend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 
@@ -9,9 +10,11 @@ namespace BaiTapThucTapBackend.Repositories
     public class KhoRepository : IKhoRepository
     {
         private readonly AppDbcontext _context;
-        public KhoRepository(AppDbcontext context)
+        private readonly NormalizeService _normalizeService;
+        public KhoRepository(AppDbcontext context,NormalizeService normalizeService)
         {
             _context = context;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<Kho>> GetAll() => await _context.Khos.ToListAsync();
@@ -35,6 +38,6 @@ namespace BaiTapThucTapBackend.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> ExistsTen(string ten) => await _context.Khos.AnyAsync(x => x.Ten_Kho == ten);
+        public async Task<bool> ExistsTen(string ten) => await _context.Khos.AnyAsync(x => x.Ten_Kho.ToLower() == _normalizeService.Normalize(ten).ToLower());
     }
 }

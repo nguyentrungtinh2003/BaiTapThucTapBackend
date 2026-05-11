@@ -69,6 +69,8 @@ builder.Services.AddScoped<IXuatKhoDetailService, XuatKhoDetailService>();
 builder.Services.AddScoped<IXuatNhapTonRepository, XuatNhapTonRepository>();
 builder.Services.AddScoped<IXuatNhapTonService, XuatNhapTonService>();
 
+builder.Services.AddScoped<NormalizeService>();
+
 
 // authen---
 //builder.Services.AddAuthentication("Bearer")

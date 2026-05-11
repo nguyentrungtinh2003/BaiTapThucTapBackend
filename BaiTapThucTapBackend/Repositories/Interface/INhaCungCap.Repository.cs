@@ -9,5 +9,8 @@ namespace BaiTapThucTapBackend.Repositories.Interface
         Task Add(NhaCungCap entity);
         Task Update(NhaCungCap entity);
         Task Delete(NhaCungCap entity);
+
+        Task<bool> ExistsMa(string ma);
+        Task<bool> ExistsTen(string ten);
     }
 }

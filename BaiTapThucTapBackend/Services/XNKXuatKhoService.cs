@@ -12,12 +12,14 @@ namespace BaiTapThucTapBackend.Services
         private readonly IXNKXuatKhoRepository _repoxnk;
         private readonly IXuatKhoRepository _repo;
         private readonly AppDbcontext _context;
+        private readonly NormalizeService _normalizeService;
 
-        public XNKXuatKhoService(IXNKXuatKhoRepository repoxnk, IXuatKhoRepository repo, AppDbcontext context)
+        public XNKXuatKhoService(IXNKXuatKhoRepository repoxnk, IXuatKhoRepository repo, AppDbcontext context,NormalizeService normalizeService)
         {
             _repoxnk = repoxnk;
             _repo = repo;
             _context = context;
+            _normalizeService = normalizeService;
         }
 
         public async Task<bool> HandleAdjustmentAsync(CreateXNKXuatKhoRequest model)
@@ -26,6 +28,9 @@ namespace BaiTapThucTapBackend.Services
 
             try
             {
+                model.So_Phieu_Xuat_Kho = _normalizeService.Normalize(model.So_Phieu_Xuat_Kho);
+                model.Ghi_Chu = model.Ghi_Chu?.Trim();
+
                 // 1. VALIDATE
                 if (string.IsNullOrEmpty(model.So_Phieu_Xuat_Kho))
                     throw new Exception("Số phiếu xuất kho không được rỗng");
@@ -71,7 +76,7 @@ namespace BaiTapThucTapBackend.Services
 
                     Version = newVersion,
                     IsLatest = true,
-                    Updated_At = DateTime.UtcNow
+                    Updated_At = DateTime.Now
                 };
 
                 await _repoxnk.Add(log);

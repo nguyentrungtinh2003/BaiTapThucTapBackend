@@ -15,17 +15,20 @@ namespace BaiTapThucTapBackend.Services
 		private readonly INhapKhoDetailRepository _repodetail;
 		private readonly IXNKNhapKhoRepository _xnkrepo;
 		private readonly AppDbcontext _context;
+        private readonly NormalizeService _normalizeService;
 
-		public NhapKhoService(
+        public NhapKhoService(
 			INhapKhoRepository repo,
 			AppDbcontext context,
 			IXNKNhapKhoRepository xnkrepo,
-			INhapKhoDetailRepository repodetail)
+			INhapKhoDetailRepository repodetail,
+			NormalizeService normalizeService)
 		{
 			_repo = repo;
 			_context = context;
 			_xnkrepo = xnkrepo;
 			_repodetail = repodetail;
+			_normalizeService = normalizeService;
 		}
 
 		// 🔥 Lấy dữ liệu HIỂN THỊ → từ XNK (IsLatest)
@@ -131,8 +134,12 @@ namespace BaiTapThucTapBackend.Services
         }
         public async Task<NhapKhoDto> Create(CreateNhapKhoRequest request)
 		{
+			
+			request.So_Phieu_Nhap_Kho = _normalizeService.Normalize(request.So_Phieu_Nhap_Kho);
+			request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
 			// 🔥 VALIDATE
-			if (string.IsNullOrEmpty(request.So_Phieu_Nhap_Kho?.Trim()))
+			if (string.IsNullOrEmpty(request.So_Phieu_Nhap_Kho))
 				throw new Exception("Số phiếu nhập kho không được rỗng");
 
 			if (request.Kho_ID <= 0)
@@ -161,7 +168,7 @@ namespace BaiTapThucTapBackend.Services
 				var log = new XNKNhapKho
 				{
 					Nhap_Kho_ID = entity.Id,
-					So_Phieu_Nhap_Kho = entity.So_Phieu_Nhap_Kho.Trim(),
+					So_Phieu_Nhap_Kho = entity.So_Phieu_Nhap_Kho,
 					Kho_ID = entity.Kho_ID,
 					NCC_ID = entity.NCC_ID,
 					Ngay_Nhap_Kho = entity.Ngay_Nhap_Kho,
@@ -169,7 +176,7 @@ namespace BaiTapThucTapBackend.Services
 
 					Version = 1,
 					IsLatest = true,
-					Updated_At = DateTime.UtcNow
+					Updated_At = DateTime.Now
 				};
 
 				await _xnkrepo.Add(log);
@@ -191,25 +198,58 @@ namespace BaiTapThucTapBackend.Services
 			var item = await _context.NhapKhoChiTiets.FindAsync(id);
 			if(item == null)
 			{
-				throw new Exception("Khong tim thay");
+				throw new Exception("Không tìm thấy");
 			}
-
+            if (entity.SL_Nhap <= 0)
+            {
+                throw new Exception("Số lượng nhập không hợp lệ");
+            }
+            if (entity.Don_Gia_Nhap <=  0)
+			{
+				throw new Exception("Đơn giá nhập không hợp lệ");
+			}
+			
 			item.SL_Nhap = entity.SL_Nhap;
 			item.Don_Gia_Nhap = entity.Don_Gia_Nhap;
 
 			await _repodetail.Update(item);
 		}
-		public async Task Delete(int id)
-		{
-			var entity = await _repo.GetById(id);
+		//public async Task Delete(int id)
+		//{
+		//	var entity = await _repo.GetById(id);
 
-			if (entity == null)
-				throw new Exception("Không tìm thấy nhập kho");
+		//	if (entity == null)
+		//		throw new Exception("Không tìm thấy nhập kho");
 
-			await _repo.Delete(entity);
-		}
+		//	await _repo.Delete(entity);
+		//}
 
-		public async Task<List<BaoCaoNhapKhoDto>> BaoCaoChiTietHangNhap(DateTime startDate, DateTime endDate, int userKhoId, bool isAdmin)
+        public async Task Delete(int id)
+        {
+            var entity = await _repo.GetById(id);
+
+            if (entity == null)
+                throw new Exception("Không tìm thấy nhập kho");
+
+            // xóa detail
+            var details = _context.NhapKhoChiTiets
+                .Where(x => x.Nhap_Kho_ID == id);
+
+            _context.NhapKhoChiTiets.RemoveRange(details);
+
+            // xóa log XNK
+            var logs = _context.XNKNhapKhos
+                .Where(x => x.Nhap_Kho_ID == id);
+
+            _context.XNKNhapKhos.RemoveRange(logs);
+
+            // xóa header
+            _context.NhapKhos.Remove(entity);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<BaoCaoNhapKhoDto>> BaoCaoChiTietHangNhap(DateTime startDate, DateTime endDate, int userKhoId, bool isAdmin)
 			=> await _repo.BaoCaoChiTietHangNhap(startDate, endDate, userKhoId, isAdmin);
 		
 	}

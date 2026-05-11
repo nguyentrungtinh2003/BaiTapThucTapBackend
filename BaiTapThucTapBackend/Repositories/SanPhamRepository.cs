@@ -2,6 +2,7 @@
 using BaiTapThucTapBackend.DTOs;
 using BaiTapThucTapBackend.Models;
 using BaiTapThucTapBackend.Repositories.Interface;
+using BaiTapThucTapBackend.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BaiTapThucTapBackend.Repositories
@@ -9,10 +10,12 @@ namespace BaiTapThucTapBackend.Repositories
     public class SanPhamRepository : ISanPhamRepository
     {
         private readonly AppDbcontext _context;
+        private readonly NormalizeService _normalizeService;
 
-        public SanPhamRepository(AppDbcontext context)
+        public SanPhamRepository(AppDbcontext context,NormalizeService normalizeService)
         {
             _context = context;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<SanPham>> GetAll() => await _context.SanPhams
@@ -43,6 +46,6 @@ namespace BaiTapThucTapBackend.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> ExistsMa(string ma) => await _context.SanPhams.AnyAsync(x => x.Ma_San_Pham == ma);
+        public async Task<bool> ExistsMa(string ma) => await _context.SanPhams.AnyAsync(x => x.Ma_San_Pham.ToLower() == _normalizeService.Normalize(ma).ToLower());
     }
 }

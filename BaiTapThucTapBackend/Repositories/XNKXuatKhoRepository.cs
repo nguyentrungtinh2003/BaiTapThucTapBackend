@@ -1,6 +1,7 @@
 ﻿using BaiTapThucTapBackend.Data;
 using BaiTapThucTapBackend.Models;
 using BaiTapThucTapBackend.Repositories.Interface;
+using BaiTapThucTapBackend.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BaiTapThucTapBackend.Repositories
@@ -8,10 +9,12 @@ namespace BaiTapThucTapBackend.Repositories
     public class XNKXuatKhoRepository : IXNKXuatKhoRepository
     {
         private readonly AppDbcontext _context;
+        private readonly NormalizeService _normalizeService;
 
-        public XNKXuatKhoRepository(AppDbcontext context)
+        public XNKXuatKhoRepository(AppDbcontext context,NormalizeService normalizeService)
         {
             _context = context;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<XNKXuatKho>> GetAll() => await _context.XNKXuatKhos
@@ -20,7 +23,7 @@ namespace BaiTapThucTapBackend.Repositories
 
         public async Task<bool> ExistsSoPhieu(string sophieu)
         {
-            return await _context.XNKXuatKhos.AnyAsync(x => x.So_Phieu_Xuat_Kho == sophieu);
+            return await _context.XNKXuatKhos.AnyAsync(x => x.So_Phieu_Xuat_Kho.ToLower() == _normalizeService.Normalize(sophieu).ToLower());
         }
 
         public async Task Add(XNKXuatKho entity)

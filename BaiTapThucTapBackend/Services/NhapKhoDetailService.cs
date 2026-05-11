@@ -15,13 +15,21 @@ namespace BaiTapThucTapBackend.Services
         }
         public async Task Create(NhapKhoDetail entity)
         {
+            if(entity.Nhap_Kho_ID <= 0)
+            {
+                throw new Exception("Nhập kho không được rỗng");
+            }
+            if(entity.San_Pham_ID <= 0)
+            {
+                throw new Exception("Sản phẩm không được rỗng");
+            }
             if(entity.SL_Nhap <= 0)
             {
-                throw new Exception("So luong nhap khong hop le");
+                throw new Exception("Số lượng nhập kho không hợp lệ");
             }
             if(entity.Don_Gia_Nhap <= 0)
             {
-                throw new Exception("Don gia nhap khong hop le");
+                throw new Exception("Đơn giá nhập không hợp lệ");
             }
 
             await _repo.Create(entity);
@@ -37,7 +45,7 @@ namespace BaiTapThucTapBackend.Services
             var item = await _repo.GetById(id);
             if(item == null)
             {
-                throw new Exception("Khong tim thay");
+                throw new Exception("Không tìm thấy");
             }
 
             item.SL_Nhap = entity.SL_Nhap;

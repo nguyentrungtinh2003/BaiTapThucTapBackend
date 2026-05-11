@@ -8,10 +8,12 @@ namespace BaiTapThucTapBackend.Services
     public class LoaiSanPhamService : ILoaiSanPhamService
     {
         private readonly ILoaiSanPhamRepository _repo;
+        private readonly NormalizeService _normalizeService;
 
-        public LoaiSanPhamService(ILoaiSanPhamRepository repo)
+        public LoaiSanPhamService(ILoaiSanPhamRepository repo, NormalizeService normalizeService)
         {
             _repo = repo;
+            _normalizeService = normalizeService;
         }
 
         public async Task<List<LoaiSanPhamDto>> GetAll()
@@ -22,7 +24,11 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<LoaiSanPhamDto> Create(CreateLoaiSanPhamRequest request)
         {
-            if(string.IsNullOrEmpty(request.Ma_LSP))
+            request.Ma_LSP = _normalizeService.Normalize(request.Ma_LSP);
+            request.Ten_LSP = _normalizeService.Normalize(request.Ten_LSP);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
+            if (string.IsNullOrEmpty(request.Ma_LSP))
             {
                 throw new Exception("Ma_LSP không được rỗng");
             }
@@ -31,11 +37,25 @@ namespace BaiTapThucTapBackend.Services
                 throw new Exception("Ten_LSP không được rỗng");
             }
 
+            var existsMa = await _repo.ExistsMa(request.Ma_LSP);
+
+            if (existsMa)
+            {
+                throw new Exception("Mã loại sản phẩm đã tồn tại");
+            }
+
+            var existsTen = await _repo.ExistsTen(request.Ten_LSP);
+
+            if (existsTen)
+            {
+                throw new Exception("Tên loại sản phẩm đã tồn tại");
+            }
+
             var entity = new LoaiSanPham
             {
-                Ma_LSP = request.Ma_LSP?.Trim(),
-                Ten_LSP = request.Ten_LSP?.Trim(),
-                Ghi_Chu = request.Ghi_Chu?.Trim(),
+                Ma_LSP = request.Ma_LSP,
+                Ten_LSP = request.Ten_LSP,
+                Ghi_Chu = request.Ghi_Chu,
             };
 
             await _repo.Add(entity);
@@ -45,15 +65,33 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task<LoaiSanPhamDto> Update(int id, CreateLoaiSanPhamRequest request)
         {
+            request.Ma_LSP = _normalizeService.Normalize(request.Ma_LSP);
+            request.Ten_LSP = _normalizeService.Normalize(request.Ten_LSP);
+            request.Ghi_Chu = request.Ghi_Chu?.Trim();
+
             var entity = await _repo.GetById(id);
             if(entity == null)
             {
                 throw new Exception("Không tìm thấy");
             }
 
-            entity.Ma_LSP = request.Ma_LSP?.Trim();
-            entity.Ten_LSP = request.Ten_LSP?.Trim();
-            entity.Ghi_Chu = request.Ghi_Chu?.Trim();
+            var existsMa = await _repo.ExistsMa(request.Ma_LSP);
+
+            if (existsMa)
+            {
+                throw new Exception("Mã loại sản phẩm đã tồn tại");
+            }
+
+            var existsTen = await _repo.ExistsTen(request.Ten_LSP);
+
+            if (existsTen)
+            {
+                throw new Exception("Tên loại sản phẩm đã tồn tại");
+            }
+
+            entity.Ma_LSP = request.Ma_LSP;
+            entity.Ten_LSP = request.Ten_LSP;
+            entity.Ghi_Chu = request.Ghi_Chu;
 
             await _repo.Update(entity);
             return entity.ToDto();
