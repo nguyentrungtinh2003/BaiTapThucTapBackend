@@ -214,41 +214,61 @@ namespace BaiTapThucTapBackend.Services
 
 			await _repodetail.Update(item);
 		}
-		//public async Task Delete(int id)
-		//{
-		//	var entity = await _repo.GetById(id);
+        //public async Task Delete(int id)
+        //{
+        //	var entity = await _repo.GetById(id);
 
-		//	if (entity == null)
-		//		throw new Exception("Không tìm thấy nhập kho");
+        //	if (entity == null)
+        //		throw new Exception("Không tìm thấy nhập kho");
 
-		//	await _repo.Delete(entity);
-		//}
+        //	await _repo.Delete(entity);
+        //}
 
         public async Task Delete(int id)
         {
             var entity = await _repo.GetById(id);
-
             if (entity == null)
-                throw new Exception("Không tìm thấy nhập kho");
+                throw new Exception("Không tìm thấy phiếu nhập kho");
 
-            // xóa detail
-            var details = _context.NhapKhoChiTiets
-                .Where(x => x.Nhap_Kho_ID == id);
+            // 1. Lấy danh sách chi tiết của phiếu nhập sắp xóa
+            var detailsToDelete = await _context.NhapKhoChiTiets
+                .Where(x => x.Nhap_Kho_ID == id)
+                .ToListAsync();
 
-            _context.NhapKhoChiTiets.RemoveRange(details);
+            // 2. Kiểm tra từng sản phẩm trong phiếu nhập này
+            foreach (var item in detailsToDelete)
+            {
+                // Tính tổng số lượng đã nhập của sản phẩm này trong kho này (từ các phiếu khác)
+                var totalImported = await _context.NhapKhoChiTiets
+                    .Where(x => x.San_Pham_ID == item.San_Pham_ID && x.NhapKho.Kho_ID == entity.Kho_ID && x.Nhap_Kho_ID != id)
+                    .SumAsync(x => x.SL_Nhap);
 
-            // xóa log XNK
-            var logs = _context.XNKNhapKhos
-                .Where(x => x.Nhap_Kho_ID == id);
+                // Tính tổng số lượng đã xuất của sản phẩm này tại kho này
+                var totalExported = await _context.XuatKhoChiTiets
+                    .Where(x => x.San_Pham_ID == item.San_Pham_ID && x.XuatKho.Kho_ID == entity.Kho_ID)
+                    .SumAsync(x => x.SL_Xuat);
 
+                // Nếu xóa phiếu này mà làm tổng nhập nhỏ hơn tổng xuất -> Chặn
+                if (totalImported < totalExported)
+                {
+                    throw new Exception($"Không thể xóa! Sản phẩm ID {item.San_Pham_ID} đã xuất {totalExported} cái, " +
+                                        $"nếu xóa phiếu này thì tổng nhập chỉ còn {totalImported}, dẫn đến âm kho.");
+                }
+            }
+
+            // 3. Nếu kiểm tra qua hết mới tiến hành xóa
+            // Xóa detail
+            _context.NhapKhoChiTiets.RemoveRange(detailsToDelete);
+
+            // Xóa log XNK
+            var logs = _context.XNKNhapKhos.Where(x => x.Nhap_Kho_ID == id);
             _context.XNKNhapKhos.RemoveRange(logs);
 
-            // xóa header
+            // Xóa header
             _context.NhapKhos.Remove(entity);
 
             await _context.SaveChangesAsync();
         }
-
         public async Task<List<BaoCaoNhapKhoDto>> BaoCaoChiTietHangNhap(DateTime startDate, DateTime endDate, int userKhoId, bool isAdmin)
 			=> await _repo.BaoCaoChiTietHangNhap(startDate, endDate, userKhoId, isAdmin);
 		

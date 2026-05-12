@@ -42,8 +42,15 @@ namespace BaiTapThucTapBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _service.Delete(id);
-            return Ok();
+            try
+            {
+                await _service.Delete(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); // Trả về lỗi 400 và lý do nếu bị chặn
+            }
         }
 
         [HttpGet("bao-cao-chi-tiet-hang-nhap")]

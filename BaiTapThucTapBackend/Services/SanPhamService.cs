@@ -83,6 +83,10 @@ namespace BaiTapThucTapBackend.Services
             {
                 throw new Exception("Không tìm thấy sản phẩm");
             }
+            //if (await _repo.ExistsMa(request.Ma_San_Pham))
+            //{
+            //    throw new Exception("Mă sản phẩm đă tồn tại");
+            //}
 
             entity.Ma_San_Pham = request.Ma_San_Pham;
             entity.Ten_San_Pham = request.Ten_San_Pham;

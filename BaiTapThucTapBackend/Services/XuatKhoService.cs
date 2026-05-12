@@ -1,4 +1,5 @@
-﻿using BaiTapThucTapBackend.Data;
+﻿using Azure.Core;
+using BaiTapThucTapBackend.Data;
 using BaiTapThucTapBackend.DTOs;
 using BaiTapThucTapBackend.Models;
 using BaiTapThucTapBackend.Repositories.Interface;
@@ -140,10 +141,30 @@ namespace BaiTapThucTapBackend.Services
             if (exists)
                 throw new Exception("Số phiếu xuất kho đã tồn tại");
 
+           
             await using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
+                foreach (var item in request.ChiTiets)
+                {
+                    var tongNhap = _context.NhapKhoChiTiets
+                        .Where(x => x.NhapKho.Kho_ID == request.Kho_ID
+                                 && x.San_Pham_ID == item.San_Pham_ID)
+                        .Sum(x => x.SL_Nhap);
+
+                    var tongXuat = _context.XuatKhoChiTiets
+                        .Where(x => x.XuatKho.Kho_ID == request.Kho_ID
+                                 && x.San_Pham_ID == item.San_Pham_ID)
+                        .Sum(x => x.SL_Xuat);
+
+                    var tonKho = tongNhap - tongXuat;
+
+                    if (item.SL_Xuat > tonKho)
+                    {
+                        throw new Exception($"Không đủ tồn kho cho sản phẩm. Tồn: {tonKho}");
+                    }
+                }
                 // 🟦 1. INSERT bảng gốc
                 var entity = XuatKhoMapping.ToEntity(request);
                 await _repo.Add(entity);
@@ -179,7 +200,7 @@ namespace BaiTapThucTapBackend.Services
 
         public async Task UpdateDetails(int id, XuatKhoDetailDto entity)
         {
-            var item = await _context.XuatKhoChiTiets.FindAsync(id);
+            var item = await _context.XuatKhoChiTiets.Include(x => x.XuatKho).FirstOrDefaultAsync( x => x.Id == id);
 
             if (item == null)
             {
@@ -193,6 +214,25 @@ namespace BaiTapThucTapBackend.Services
             {
                 throw new Exception("Đơn giá xuất không hợp lệ");
             }
+
+           
+                var tongNhap = _context.NhapKhoChiTiets
+                    .Where(x => x.NhapKho.Kho_ID == item.XuatKho.Kho_ID
+                             && x.San_Pham_ID == item.San_Pham_ID)
+                    .Sum(x => x.SL_Nhap);
+
+                var tongXuat = _context.XuatKhoChiTiets
+                    .Where(x => x.XuatKho.Kho_ID == item.XuatKho.Kho_ID
+                             && x.San_Pham_ID == item.San_Pham_ID)
+                    .Sum(x => x.SL_Xuat);
+
+                var tonKho = tongNhap - (tongXuat - item.SL_Xuat + entity.SL_Xuat);
+
+                if (tonKho < 0)
+                {
+                    throw new Exception($"Không đủ tồn kho cho sản phẩm");
+                }
+            
 
             item.SL_Xuat = entity.SL_Xuat;
             item.Don_Gia_Xuat = entity.Don_Gia_Xuat;
