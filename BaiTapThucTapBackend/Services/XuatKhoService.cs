@@ -164,6 +164,15 @@ namespace BaiTapThucTapBackend.Services
                     {
                         throw new Exception($"Không đủ tồn kho cho sản phẩm. Tồn: {tonKho}");
                     }
+
+                    //var exsisItem = _context.NhapKhoChiTiets
+                    //    .Where(x => x.NhapKho.Kho_ID == request.Kho_ID
+                    //             && x.San_Pham_ID == item.San_Pham_ID);
+
+                    //if(!exists)
+                    //{
+                    //    throw new Exception("Kho không có sản phẩm này, nên không xuất được!");
+                    //}
                 }
                 // 🟦 1. INSERT bảng gốc
                 var entity = XuatKhoMapping.ToEntity(request);
